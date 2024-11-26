@@ -7,13 +7,31 @@
   "scripts": {
     "test": "node --test"
   },
+  "files": [
+    "src",
+    "index.js",
+    "index.d.ts"
+  ],
+  "engines": {
+    "node": ">=0.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bruderjulian/Unpathify.git"
+  },
+  "homepage": "https://github.com/Bruderjulian/Unpathify#readme",
+  "bugs": {
+    "url": "https://github.com/Bruderjulian/Unpathify/issues",
+    "email": "vitaly.tomilov@gmail.com"
+  },
   "keywords": [
     "object",
+    "obj",
     "property",
+    "prop",
     "path",
     "notation",
     "object",
-    "path",
     "obj-path",
     "obj-prop",
     "unpathify",
