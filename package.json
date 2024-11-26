@@ -1,0 +1,24 @@
+{
+  "name": "unpathify",
+  "version": "1.1.0",
+  "description": "An awesome Object-path notation library",
+  "main": "index.js",
+  "types": "./index.d.ts",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "object",
+    "property",
+    "path",
+    "notation",
+    "object",
+    "path",
+    "obj-path",
+    "obj-prop",
+    "unpathify",
+    "pathify"
+  ],
+  "author": "BruderJulian",
+  "license": "MIT"
+}
