@@ -164,30 +164,31 @@ describe("API Tests", function () {
   it("removeProperty", function () {
     clearCache();
     let obj = { a: [1, 2], b: 4 };
-    let arr = new Array(2);
-    arr[1] = 2;
     unPathify.removeProperty(obj, "a[0]");
-    deepEqual(obj, { a: arr, b: 4 });
+    deepEqual(obj, { a: [2], b: 4 });
     testCache();
 
     clearCache();
     unPathify.removeProperty(obj, "b");
-    deepEqual(obj, { a: arr });
+    deepEqual(obj, { a: [2] });
     testCache2();
   });
 
   it("deleteProperty", function () {
     clearCache();
     let obj = { a: [1, 2], b: 4 };
-    let arr = new Array(2);
-    arr[1] = 2;
     unPathify.deleteProperty(obj, "a[0]");
-    deepEqual(obj, { a: arr, b: 4 });
+    deepEqual(obj, { a: [2], b: 4 });
     testCache();
 
     clearCache();
+    throws(()=> unPathify.deleteProperty(obj, "a.b"));
+    pathy_state = unPathify._getPrivates();
+    deepEqual(pathy_state.cache, { "a.b": { value: ["b", "a"], count: 1 } });
+
+    clearCache();
     unPathify.deleteProperty(obj, "b");
-    deepEqual(obj, { a: arr });
+    deepEqual(obj, { a: [2] });
     testCache2();
   });
 

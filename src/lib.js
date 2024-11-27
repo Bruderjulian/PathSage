@@ -22,8 +22,11 @@ const hasFn = function (data, obj, key) {
 }.bind(null, null);
 
 const removeFn = function (data, obj, key) {
-  obj[key] = undefined;
-  delete obj[key];
+  if (isArray(obj)) {
+    key = parseInt(key, 10);
+    if (isNaN(key)) throw "key is NaN";
+    obj.splice(key, 1);
+  } else delete obj[key];
 }.bind(null, null);
 
 function tokenizePath(path, allowKeys, parseNumber) {
@@ -43,7 +46,13 @@ function tokenizePath(path, allowKeys, parseNumber) {
 }
 
 function extractProperty(obj, path) {
-  if (path.length === 1) return func(obj, path[0]);
+  if (path.length === 1) {
+    try {
+      return func(obj, path[0]);
+    } catch (err) {
+      throw new EvalError("Could not modify object because: " + err);
+    }
+  }
   const prop = obj[path.pop()];
   //if (path.length === 0) return prop;
   if (isNotObjectLike(prop)) {

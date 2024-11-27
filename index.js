@@ -29,7 +29,7 @@ const env = require("process").env.NODE_ENV || "prod";
  * @version 1.1
  */
 
-// Todo: test EvalErrors, fix remove Bug, Class Key Iteration
+// Todo: test EvalErrors, Class Key Iteration
 class unPathify {
   static #cache = {};
   static #allowKeys = false;
