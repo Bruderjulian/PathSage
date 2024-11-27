@@ -94,11 +94,11 @@ declare class unpathify {
   /**
    * configures the parser and the cache
    * @param {object} [options]
-   * @param {boolean} options.allowKeys - allows special keys (.constuctor, .prototype, etc).
-   * @param {boolean} options.parseNumbers - parses the stringifed numbers back to a number
+   * @param {boolean} options.allowKeys - allows special keys (.constructor, .prototype, etc).
+   * @param {boolean} options.parseNumbers - parses the stringified numbers back to a number
    * @param {boolean} options.cacheSize - defines the cache size (if equal to -1, the cache won't be cleared)
    */
-  static configure(options?: object = {}): void;
+  static configure(options?: object): void;
 
   /**
    * Clears the entire cache

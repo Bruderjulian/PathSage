@@ -11,7 +11,7 @@ const {
 
 describe("resolver", () => {
   it("Operator Exists", function () {
-    equal(typeof Function.bind, "function", "Binding is not availabe");
+    equal(typeof Function.bind, "function", "Binding is not available");
     equal(typeof setFn, "function");
     equal(typeof getFn, "function");
     equal(typeof hasFn, "function");
