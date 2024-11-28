@@ -32,6 +32,10 @@ const removeFn = function (data, obj, key) {
   } else delete obj[key];
 }.bind(null, null);
 
+const createFn = function (data, obj, key) {
+  if (!Object.hasOwn(obj, key)) obj[key] = {};
+}.bind(null, null);
+
 function tokenizePath(path, allowKeys) {
   const res = [],
     reg = /\[\s*(\d+)(?=\s*])|\[\s*(["'`])((?:\\.|(?!\2).)*)\2\s*]|[\w$]+/g;
@@ -47,20 +51,32 @@ function tokenizePath(path, allowKeys) {
   return res;
 }
 
-function extractProperty(obj, path) {
+function evalProperty(obj, path) {
   if (path.length === 1) return func(obj, path[0]);
   const prop = obj[path.pop()];
   //if (path.length === 0) return prop;
   if (isNotObjectLike(prop)) {
     throw new EvalError("Could not fully evaluate the object path");
   }
-  return extractProperty(prop, path);
+  return evalProperty(prop, path);
 }
 
-function evalNotation(fn, obj, pathArr) {
+function evalEveryProperty(obj, path) {
+  let out = func(obj, path[0]);
+  if (out) return out;
+  const prop = obj[path.pop()];
+  if (path.length === 0) return;
+  if (isNotObjectLike(prop)) {
+    throw new EvalError("Could not fully evaluate the object path");
+  }
+  return evalEveryProperty(prop, path);
+}
+
+function evalNotation(fn, obj, pathArr, every = false) {
   if (pathArr.length === 0) return obj;
   func = fn;
-  return extractProperty(obj, pathArr);
+  if (every) return evalEveryProperty(obj, pathArr);
+  else return evalProperty(obj, pathArr);
 }
 
 function escapePath(token) {
@@ -123,4 +139,5 @@ module.exports = {
   getFn,
   hasFn,
   removeFn,
+  createFn,
 };

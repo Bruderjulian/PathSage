@@ -6,6 +6,7 @@ const {
   getFn,
   hasFn,
   removeFn,
+  createFn,
 } = require("./src/lib");
 const {
   isNotObjectLike,
@@ -53,6 +54,12 @@ class unPathify {
     checkPath(path);
     checkObject(object);
     evalNotation(removeFn, object, this.#tokenize(path));
+  }
+
+  static create(object, path) {
+    checkPath(path);
+    checkObject(object);
+    evalNotation(createFn, object, this.#tokenize(path));
   }
 
   static validate(path) {
