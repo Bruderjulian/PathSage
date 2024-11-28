@@ -21,7 +21,6 @@ const env = require("process").env.NODE_ENV || "prod";
 class unPathify {
   static #cache = {};
   static #allowKeys = false;
-  static #parseNumbers = false;
   static #currentSize = 0;
   static #cacheSize = 16;
 
@@ -76,9 +75,6 @@ class unPathify {
     if (typeof options.allowKeys === "boolean") {
       this.#allowKeys = options.allowKeys;
     }
-    if (typeof options.parseNumbers === "boolean") {
-      this.#parseNumbers = options.parseNumbers;
-    }
     if (validCacheSize(options.cacheSize)) {
       this.#cacheSize = options.cacheSize;
     }
@@ -89,11 +85,7 @@ class unPathify {
       return this.#cache[path] || [];
     }
     checkNotation(path);
-    var tokens = tokenizePath(
-      path,
-      this.#allowKeys,
-      this.#parseNumbers
-    ).reverse();
+    var tokens = tokenizePath(path, this.#allowKeys).reverse();
     if (this.#currentSize >= this.#cacheSize && this.#cacheSize !== -1) {
       this.clearCache();
     }
@@ -109,7 +101,6 @@ class unPathify {
       cacheSize: this.#cacheSize,
       currentSize: this.#currentSize,
       allowKeys: this.#allowKeys,
-      parseNumbers: this.#parseNumbers,
     };
   }
 }

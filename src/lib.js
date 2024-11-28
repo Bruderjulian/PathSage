@@ -29,14 +29,13 @@ const removeFn = function (data, obj, key) {
   } else delete obj[key];
 }.bind(null, null);
 
-function tokenizePath(path, allowKeys, parseNumber) {
+function tokenizePath(path, allowKeys) {
   const res = [],
     reg = /\[\s*(\d+)(?=\s*])|\[\s*(["'`])((?:\\.|(?!\2).)*)\2\s*]|[\w$]+/g;
   let a, token;
   while ((a = reg.exec(path))) {
     token = a[1] || a[3] || a[0];
     if (skipTokens.has(token)) continue;
-    if (parseNumber) token = !isNaN(token) ? parseInt(token, 10) : token;
     if (!allowKeys && disallowedTokens.has(token))
       throw new SyntaxError("Disallowed Key encountered");
     res.push(token);
