@@ -7,11 +7,9 @@ describe("API Tests", function () {
   it("defaults", function () {
     let defaults = {
       cache: {},
-      maxCount: 0,
       cacheSize: 16,
       currentSize: 0,
       allowKeys: false,
-      parseNumbers: false,
     };
     let state = unPathify._getPrivates();
     deepEqual(state, defaults);
@@ -19,28 +17,23 @@ describe("API Tests", function () {
   it("must handle configurations", function () {
     unPathify.configure({
       allowKeys: true,
-      parseNumbers: true,
       cacheSize: 32,
     });
     let state = unPathify._getPrivates();
     deepEqual(state.allowKeys, true);
-    deepEqual(state.parseNumbers, true);
     deepEqual(state.cacheSize, 32);
 
     unPathify.configure({ cacheSize: -2 });
     state = unPathify._getPrivates();
     deepEqual(state.cacheSize, 32);
     deepEqual(state.allowKeys, true);
-    deepEqual(state.parseNumbers, true);
 
     unPathify.configure({
       allowKeys: false,
-      parseNumbers: false,
       cacheSize: 16,
     });
     state = unPathify._getPrivates();
     deepEqual(state.allowKeys, false);
-    deepEqual(state.parseNumbers, false);
     deepEqual(state.cacheSize, 16);
   });
 
@@ -182,39 +175,14 @@ describe("API Tests", function () {
     testCache();
 
     clearCache();
-    throws(()=> unPathify.deleteProperty(obj, "a.b"));
+    throws(() => unPathify.deleteProperty(obj, "a.b"));
     state = unPathify._getPrivates();
-    deepEqual(state.cache, { "a.b": { value: ["b", "a"], count: 1 } });
+    deepEqual(state.cache, { "a.b": ["b", "a"] });
 
     clearCache();
     unPathify.deleteProperty(obj, "b");
     deepEqual(obj, { a: [2] });
     testCache2();
-  });
-
-  it("clearCacheSmart", function () {
-    clearCache();
-    let obj = { a: [1, 2], b: 4 };
-    unPathify.getProperty(obj, "a[0]");
-    unPathify.getProperty(obj, "a[0]");
-    unPathify.getProperty(obj, "a[0]");
-    unPathify.getProperty(obj, "b");
-
-    state = unPathify._getPrivates();
-    deepEqual(state.cache, {
-      "a[0]": { value: ["0", "a"], count: 3 },
-      b: { value: ["b"], count: 1 },
-    });
-    deepEqual(state.maxCount, 3);
-    deepEqual(state.currentSize, 2);
-
-    unPathify.clearCacheSmart();
-    state = unPathify._getPrivates();
-    deepEqual(state.cache, {
-      "a[0]": { value: ["0", "a"], count: 3 },
-    });
-    deepEqual(state.maxCount, 3);
-    deepEqual(state.currentSize, 1);
   });
 
   it("auto smart clear", function () {
@@ -230,34 +198,28 @@ describe("API Tests", function () {
 
     state = unPathify._getPrivates();
     deepEqual(state.cache, {
-      "a[0]": { value: ["0", "a"], count: 3 },
-      "a[1]": { value: ["1", "a"], count: 1 },
-      b: { value: ["b"], count: 1 },
+      "a[0]": ["0", "a"],
+      "a[1]": ["1", "a"],
+      b: ["b"],
     });
-    deepEqual(state.maxCount, 3);
     deepEqual(state.currentSize, 3);
 
     unPathify.configure({ cacheSize: 2 });
-    unPathify.getProperty(obj, "a[1]");
+    unPathify.getProperty(obj, "a[2]");
 
     state = unPathify._getPrivates();
     deepEqual(state.cache, {
-      "a[0]": { value: ["0", "a"], count: 3 },
-      "a[1]": { value: ["1", "a"], count: 2 },
-      b: { value: ["b"], count: 1 },
+      "a[2]": ["2", "a"],
     });
-    deepEqual(state.maxCount, 3);
-    deepEqual(state.currentSize, 3);
+    deepEqual(state.currentSize, 1);
 
     unPathify.getProperty(obj, "c");
     state = unPathify._getPrivates();
     deepEqual(state.cache, {
-      "a[0]": { value: ["0", "a"], count: 3 },
-      "a[1]": { value: ["1", "a"], count: 2 },
-      c: { value: ["c"], count: 1 },
+      "a[2]": ["2", "a"],
+      c: ["c"],
     });
-    deepEqual(state.maxCount, 3);
-    deepEqual(state.currentSize, 3);
+    deepEqual(state.currentSize, 2);
   });
 
   //Tokenizer (private)
@@ -272,18 +234,16 @@ describe("API Tests", function () {
     out = unPathify.getProperty(obj, "a[0]");
     deepEqual(out, 1);
     state = unPathify._getPrivates();
-    deepEqual(state.cache, { "a[0]": { value: ["0", "a"], count: 2 } });
-    deepEqual(state.maxCount, 2);
+    deepEqual(state.cache, { "a[0]": ["0", "a"] });
     deepEqual(state.currentSize, 1);
 
     out = unPathify.getProperty(obj, "b");
     deepEqual(out, 4);
     state = unPathify._getPrivates();
     deepEqual(state.cache, {
-      "a[0]": { value: ["0", "a"], count: 2 },
-      b: { value: ["b"], count: 1 },
+      "a[0]": ["0", "a"],
+      b: ["b"],
     });
-    deepEqual(state.maxCount, 2);
     deepEqual(state.currentSize, 2);
   });
 });
@@ -292,20 +252,17 @@ function clearCache() {
   unPathify.clearCache();
   state = unPathify._getPrivates();
   deepEqual(state.cache, {});
-  deepEqual(state.maxCount, 0);
   deepEqual(state.currentSize, 0);
 }
 
 function testCache() {
   state = unPathify._getPrivates();
-  deepEqual(state.cache, { "a[0]": { value: ["0", "a"], count: 1 } });
-  deepEqual(state.maxCount, 1);
+  deepEqual(state.cache, { "a[0]": ["0", "a"] });
   deepEqual(state.currentSize, 1);
 }
 
 function testCache2() {
   state = unPathify._getPrivates();
-  deepEqual(state.cache, { b: { value: ["b"], count: 1 } });
-  deepEqual(state.maxCount, 1);
+  deepEqual(state.cache, { b: ["b"] });
   deepEqual(state.currentSize, 1);
 }

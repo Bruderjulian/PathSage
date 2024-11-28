@@ -24,6 +24,7 @@ describe("tokenizePath", () => {
     deepEqual(tokenizePath('["abc"]'), ["abc"]);
     deepEqual(tokenizePath("['a']"), ["a"]);
     deepEqual(tokenizePath("['abc']"), ["abc"]);
+    deepEqual(tokenizePath("a[NaN].['0']", false, true), ["a", "NaN", "0"]);
   });
   it("must handle complex indexes", () => {
     deepEqual(tokenizePath('["a.b"]'), ["a.b"]);
@@ -51,9 +52,6 @@ describe("tokenizePath", () => {
     deepEqual(tokenizePath(`a[''][""]['0']["0"]`), ["a", "0", "0"]);
   });
   it("must parse according to the Args", () => {
-    deepEqual(tokenizePath("a[0].['0']", false, true), ["a", 0, "0"]);
-    deepEqual(tokenizePath("a[NaN].['0']", false, true), ["a", "NaN", 0]);
-    deepEqual(tokenizePath("a[0].['0']", false, false), ["a", "0", "0"]);
     throws(() => tokenizePath("a.constructor.b", false));
     throws(() => tokenizePath("a.__proto__.b", false));
     throws(() => tokenizePath("a.prototype.b", false));
