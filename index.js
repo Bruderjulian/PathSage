@@ -38,132 +38,52 @@ class unPathify {
   static #currentSize = 0;
   static #cacheSize = 16;
 
-  /**
-   *  Set the property at the given path to the given value.
-   *
-   *  @param {ObjectLike} object - Object or array to set the value in.
-   *  @param {string} path - Path of the property in the object, using the path notation.
-   *  @param {any} value - Value to set at the path.
-   *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is not a string
-   *  @throws {EvalError} - if the path could not be fully evaluated.
-   *  @static
-   *  @since 1.0
-   */
   static setProperty(object, path, value) {
     checkPath(path);
     checkObject(object);
     evalNotation(setFn.bind(null, value), object, this.#tokenize(path));
   }
 
-  /**
-   *  Get the value of the property at the given path.
-   *
-   *  @param {ObjectLike} object - Object or array to get the value from.
-   *  @param {string} path - Path of the property in the object, using the path notation.
-   *  @returns {any} the value at the path.
-   *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is not a string
-   *  @throws {EvalError} - if the path could not be fully evaluated.
-   *  @static
-   *  @since 1.0
-   */
   static getProperty(object, path) {
     checkPath(path);
     checkObject(object);
     return evalNotation(getFn, object, this.#tokenize(path));
   }
 
-  /**
-   *  Check whether the property at the given path exists.
-   *
-   *  @param {ObjectLike} object - Object or array to check.
-   *  @param {string} path - Path of the property in the object, using the path notation.
-   *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is not a string
-   *  @throws {EvalError} - if the path could not be fully evaluated.
-   *  @static
-   *  @since 1.0
-   */
   static hasProperty(object, path) {
     checkPath(path);
     checkObject(object);
     return evalNotation(hasFn, object, this.#tokenize(path));
   }
 
-  /**
-   * Remove the property at the given path.
-   *
-   *  @param {ObjectLike} object - Object or array to remove the value from.
-   *  @param {string} path - Path of the property in the object, using the path notation.
-   *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is not a string
-   *  @throws {EvalError} - if the path could not be fully evaluated.
-   *  @static
-   *  @since 1.0
-   */
   static removeProperty(object, path) {
     checkPath(path);
     checkObject(object);
     evalNotation(removeFn, object, this.#tokenize(path));
   }
 
-  /**
-   * Remove the property at the given path.
-   *
-   * @param {ObjectLike} object - Object or array to remove the value from.
-   * @param {string} path - Path of the property in the object, using the path notation.
-   * @alias removeProperty
-   * @throws {SyntaxError} - if the object is `undefined` or `null` or path is not a string
-   * @throws {EvalError} - if the path could not be fully evaluated.
-   * @static
-   * @since 1.0
-   */
   static deleteProperty(object, path) {
     checkPath(path);
     checkObject(object);
     evalNotation(removeFn, object, this.#tokenize(path));
   }
 
-  /**
-   * Returns an array including every path. Non-empty plain objects and arrays are recursed and are not included themselves.
-   *
-   * @param {ObjectLike} object - The object to iterate through.
-   * @throws {SyntaxError} - if the object is `undefined` or `null`
-   * @static
-   * @since 1.0
-   */
   static keys(object) {
     checkObject(object);
     return deepKeysIterator(object, []);
   }
 
-  /**
-   * Returns an array including every path. Non-empty plain objects and arrays are recursed and are not included themselves.
-   *
-   * @param {ObjectLike} object - The object to iterate through.
-   * @throws {SyntaxError} - if the object is `undefined` or `null`
-   * @alias keys()
-   * @static
-   * @since 1.0
-   */
   static getPaths(object) {
     checkObject(object);
     return deepKeysIterator(object, []);
   }
 
-  /**
-   * Clears the entire cache
-   * @static
-   * @since 1.0
-   */
   static clearCache() {
     this.#cache = {};
     this.#currentSize = 0;
     this.#maxCount = 0;
   }
 
-  /**
-   * Clears the entire cache in a smart way by only removing the lower half of entries (defined by the usage count)
-   * @static
-   * @since 1.0
-   */
   static clearCacheSmart() {
     var threshold = this.#maxCount / 2;
     var count;
@@ -176,13 +96,6 @@ class unPathify {
     }
   }
 
-  /**
-   * configures the parser and the cache
-   * @param {Object} [options]
-   * @param {boolean} options.allowKeys - allows special keys (.constructor, .prototype, etc).
-   * @param {boolean} options.parseNumbers - parses the stringified numbers back to a number
-   * @param {boolean} options.cacheSize - defines the cache size (if equal to -1, the cache won't be cleared)
-   */
   static configure(options = {}) {
     if (isNotObjectLike(options) || isArray(options))
       throw new TypeError("Invalid Options Type");
@@ -197,12 +110,6 @@ class unPathify {
     }
   }
 
-  /**
-   * tokenizes a path and handles cache accessing/adding.
-   * @private
-   * @param {string} path - path to tokenize
-   * @returns {string[]} - parsed tokens
-   */
   static #tokenize(path) {
     if (Object.hasOwn(this.#cache, path)) {
       let container = this.#cache[path];
