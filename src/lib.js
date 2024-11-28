@@ -1,4 +1,7 @@
-const { isNotObjectLike, isArray } = require("./utils");
+const isArray = Array.isArray;
+function isNotObjectLike(obj) {
+  return typeof obj !== "object" || obj === null;
+}
 
 var func;
 const disallowedTokens = new Set([
@@ -45,13 +48,7 @@ function tokenizePath(path, allowKeys) {
 }
 
 function extractProperty(obj, path) {
-  if (path.length === 1) {
-    try {
-      return func(obj, path[0]);
-    } catch (err) {
-      throw new EvalError("Could not modify object because: " + err);
-    }
-  }
+  if (path.length === 1) return func(obj, path[0]);
   const prop = obj[path.pop()];
   //if (path.length === 0) return prop;
   if (isNotObjectLike(prop)) {
@@ -61,35 +58,38 @@ function extractProperty(obj, path) {
 }
 
 function evalNotation(fn, obj, pathArr) {
-  if (typeof fn !== "function") throw new SyntaxError("Invalid Operation");
   if (pathArr.length === 0) return obj;
   func = fn;
-  return extractProperty(obj, pathArr.slice(0));
+  return extractProperty(obj, pathArr);
 }
 
 function escapePath(token) {
-  if (/\.|\[|\]|\"|\'|\s/.test(token))
+  if (/\.|\[|\]|\"|\'|\s/.test(token)) {
     return token.includes('"') ? `['${token}']` : `["${token}"]`;
+  }
   return token;
 }
 
 function entries(value) {
-  const result = Object.entries(value);
   if (isArray(value)) {
-    return result.map(([key, value]) => [Number(key), value]);
+    let acc = [];
+    let i = 0;
+    for (; i < value.length; i++) acc.push([i, value[i]]);
+    return acc;
   }
-  return result;
+  return Object.entries(value);
 }
 
 function stringifyPath(tokens) {
   let result = "";
   let token;
   let len = tokens.length;
+  let i = 0;
   if (len === 1 || !isArray(tokens)) return escapePath(tokens[0]);
-  for (let i = 0; i < len; i++) {
+  for (; i < len; i++) {
     token = tokens[i];
     if (typeof token === "number") {
-      result += "[" + token + "]";
+      result += `[${token}]`;
     } else {
       token = escapePath(token);
       result += i === 0 ? token : `.${token}`;
@@ -100,7 +100,9 @@ function stringifyPath(tokens) {
 
 function deepKeysIterator(obj, path) {
   var result = [];
-  for (const [key, value] of entries(obj)) {
+  var numbered = isArray(obj);
+  for (const [key, value] of Object.entries(obj)) {
+    if (numbered) key = parseInt(key, 10);
     if (
       typeof value !== "object" ||
       value === null ||
