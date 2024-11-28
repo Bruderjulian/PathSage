@@ -7,6 +7,7 @@ const {
   hasFn,
   removeFn,
   createFn,
+  hasFn2,
 } = require("./src/lib");
 const {
   isNotObjectLike,
@@ -38,10 +39,14 @@ class unPathify {
     return evalNotation(getFn, object, this.#tokenize(path));
   }
 
-  static hasProperty(object, path) {
+  static hasProperty(object, path, detailed = false) {
     checkPath(path);
     checkObject(object);
-    return evalNotation(hasFn, object, this.#tokenize(path));
+    return evalNotation(
+      detailed == true ? hasFn2 : hasFn,
+      object,
+      this.#tokenize(path)
+    );
   }
 
   static removeProperty(object, path) {
@@ -60,6 +65,12 @@ class unPathify {
     checkPath(path);
     checkObject(object);
     evalNotation(createFn, object, this.#tokenize(path));
+  }
+
+  static hasDetailed(object, path) {
+    checkPath(path);
+    checkObject(object);
+    return evalNotation(hasFn2, object, this.#tokenize(path));
   }
 
   static validate(path) {

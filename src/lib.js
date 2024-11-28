@@ -36,6 +36,16 @@ const createFn = function (data, obj, key) {
   if (!Object.hasOwn(obj, key)) obj[key] = {};
 }.bind(null, null);
 
+const hasFn2 = function (data, obj, key) {
+  if (!Object.hasOwn(obj, key)) {
+    return {
+      depth: func.depth,
+      failedKey: key,
+      currentObject: obj,
+    };
+  } else func.depth++;
+}.bind(null, null);
+
 function tokenizePath(path, allowKeys) {
   const res = [],
     reg = /\[\s*(\d+)(?=\s*])|\[\s*(["'`])((?:\\.|(?!\2).)*)\2\s*]|[\w$]+/g;
@@ -140,4 +150,5 @@ module.exports = {
   hasFn,
   removeFn,
   createFn,
+  hasFn2
 };
