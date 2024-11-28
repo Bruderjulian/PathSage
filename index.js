@@ -22,7 +22,7 @@ class unPathify {
   static #cache = {};
   static #allowKeys = false;
   static #currentSize = 0;
-  static #cacheSize = 16;
+  static #cacheSize = -1;
 
   static setProperty(object, path, value) {
     checkPath(path);
@@ -86,7 +86,7 @@ class unPathify {
     }
     checkNotation(path);
     var tokens = tokenizePath(path, this.#allowKeys).reverse();
-    if (this.#currentSize >= this.#cacheSize && this.#cacheSize !== -1) {
+    if (this.#currentSize > this.#cacheSize && this.#cacheSize !== -1) {
       this.clearCache();
     }
     this.#cache[path] = tokens;
