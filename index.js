@@ -17,24 +17,11 @@ const {
 } = require("./src/utils");
 const env = require("process").env.NODE_ENV || "prod";
 
-/**
- * A object, which is not null.
- * @typedef {(Object|any[])} ObjectLike
- */
-
-/**
- * static class containing the API.
- * @name unpathify
- * @author BruderJulian <https://github.com/Bruderjulian>
- * @version 1.1
- */
-
 // Todo: test EvalErrors, Class Key Iteration
 class unPathify {
   static #cache = {};
   static #allowKeys = false;
   static #parseNumbers = false;
-  static #maxCount = 0;
   static #currentSize = 0;
   static #cacheSize = 16;
 
@@ -81,19 +68,6 @@ class unPathify {
   static clearCache() {
     this.#cache = {};
     this.#currentSize = 0;
-    this.#maxCount = 0;
-  }
-
-  static clearCacheSmart() {
-    var threshold = this.#maxCount / 2;
-    var count;
-    for (const key of Object.keys(this.#cache)) {
-      count = this.#cache[key].count;
-      if (count < threshold || count == 0) {
-        delete this.#cache[key];
-        this.#currentSize--;
-      }
-    }
   }
 
   static configure(options = {}) {
@@ -112,11 +86,7 @@ class unPathify {
 
   static #tokenize(path) {
     if (Object.hasOwn(this.#cache, path)) {
-      let container = this.#cache[path];
-      if (++container.count > this.#maxCount) {
-        this.#maxCount = container.count;
-      }
-      return container.value;
+      return this.#cache[path] || [];
     }
     checkNotation(path);
     var tokens = tokenizePath(
@@ -125,14 +95,10 @@ class unPathify {
       this.#parseNumbers
     ).reverse();
     if (this.#currentSize >= this.#cacheSize && this.#cacheSize !== -1) {
-      this.clearCacheSmart();
+      this.clearCache();
     }
-    this.#cache[path] = {
-      value: tokens,
-      count: 1,
-    };
+    this.#cache[path] = tokens;
     this.#currentSize++;
-    if (this.#maxCount == 0) this.#maxCount++;
     return tokens;
   }
 
@@ -140,7 +106,6 @@ class unPathify {
     if (env !== "test") return;
     return {
       cache: this.#cache,
-      maxCount: this.#maxCount,
       cacheSize: this.#cacheSize,
       currentSize: this.#currentSize,
       allowKeys: this.#allowKeys,
