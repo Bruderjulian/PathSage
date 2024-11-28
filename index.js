@@ -14,6 +14,7 @@ const {
   checkPath,
   checkNotation,
   isArray,
+  checkTokens,
 } = require("./src/utils");
 const env = require("process").env.NODE_ENV || "prod";
 
@@ -52,6 +53,11 @@ class unPathify {
     checkPath(path);
     checkObject(object);
     evalNotation(removeFn, object, this.#tokenize(path));
+  }
+
+  static validate(path) {
+    if (isArray(path)) checkTokens(path);
+    else checkNotation(path);
   }
 
   static keys(object) {
