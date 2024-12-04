@@ -9,9 +9,7 @@ function validCacheSize(size) {
   return (
     typeof size === "number" &&
     !isNaN(size) &&
-    size >= -1 &&
-    size <= 256 &&
-    parseInt(size, 10) === size
+    size >= -1
   );
 }
 

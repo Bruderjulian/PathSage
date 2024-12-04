@@ -93,9 +93,8 @@ class unPathify {
     if (typeof options.allowKeys === "boolean") {
       this.#allowKeys = options.allowKeys;
     }
-    if (validCacheSize(options.cacheSize)) {
-      this.#cacheSize = options.cacheSize;
-    }
+    let size = parseInt(options.cacheSize, 10);
+    if (validCacheSize(size)) this.#cacheSize = size;
   }
 
   static #tokenize(path) {
