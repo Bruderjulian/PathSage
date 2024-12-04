@@ -36,7 +36,7 @@ const createFn = function (data, obj, key) {
   if (!Object.hasOwn(obj, key)) obj[key] = {};
 }.bind(null, null);
 
-const hasFn2 = function (data, obj, key) {
+const hasFnDetailed = function (data, obj, key) {
   if (!Object.hasOwn(obj, key)) {
     return {
       depth: func.depth,
@@ -72,21 +72,27 @@ function evalProperty(obj, path) {
 }
 
 function evalEveryProperty(obj, path) {
-  let out = func(obj, path[0]);
-  if (out) return out;
-  const prop = obj[path.pop()];
-  if (path.length === 0) return;
+  let key = path.pop();
+  let out = func(obj, key);
+  if (out || path.length === 0) return out;
+  const prop = obj[key];
   if (isNotObjectLike(prop)) {
     throw new EvalError("Could not fully evaluate the object path");
   }
   return evalEveryProperty(prop, path);
 }
 
-function evalNotation(fn, obj, pathArr, every = false) {
+function evalSingle(fn, obj, pathArr) {
   if (pathArr.length === 0) return obj;
   func = fn;
-  if (every) return evalEveryProperty(obj, pathArr);
-  else return evalProperty(obj, pathArr);
+  return evalProperty(obj, pathArr.slice(0));
+}
+
+function evalEvery(fn, obj, pathArr) {
+  if (pathArr.length === 0) return obj;
+  func = fn;
+  func.depth = 0;
+  return evalEveryProperty(obj, pathArr.slice(0));
 }
 
 function escapePath(token) {
@@ -96,6 +102,7 @@ function escapePath(token) {
   return token;
 }
 
+/*
 function entries(value) {
   if (isArray(value)) {
     let acc = [];
@@ -105,6 +112,7 @@ function entries(value) {
   }
   return Object.entries(value);
 }
+*/
 
 function stringifyPath(tokens) {
   let result = "";
@@ -127,7 +135,7 @@ function stringifyPath(tokens) {
 function deepKeysIterator(obj, path) {
   var result = [];
   var numbered = isArray(obj);
-  for (const [key, value] of Object.entries(obj)) {
+  for (let [key, value] of Object.entries(obj)) {
     if (numbered) key = parseInt(key, 10);
     if (
       typeof value !== "object" ||
@@ -143,12 +151,13 @@ function deepKeysIterator(obj, path) {
 
 module.exports = {
   tokenizePath,
-  evalNotation,
+  evalSingle,
+  evalEvery,
   deepKeysIterator,
   setFn,
   getFn,
   hasFn,
   removeFn,
   createFn,
-  hasFn2
+  hasFnDetailed,
 };

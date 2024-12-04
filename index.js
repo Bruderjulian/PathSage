@@ -1,19 +1,20 @@
 const {
   tokenizePath,
-  evalNotation,
+  evalSingle,
+  evalEvery,
   deepKeysIterator,
   setFn,
   getFn,
   hasFn,
   removeFn,
   createFn,
-  hasFn2,
+  hasFnDetailed,
 } = require("./src/lib");
+
 const {
   isNotObjectLike,
   validCacheSize,
   checkObject,
-  checkPath,
   checkNotation,
   isArray,
   checkTokens,
@@ -28,49 +29,42 @@ class unPathify {
   static #cacheSize = -1;
 
   static setProperty(object, path, value) {
-    checkPath(path);
     checkObject(object);
-    evalNotation(setFn.bind(null, value), object, this.#tokenize(path));
+    evalSingle(setFn.bind(null, value), object, this.#tokenize(path));
   }
 
   static getProperty(object, path) {
-    checkPath(path);
     checkObject(object);
-    return evalNotation(getFn, object, this.#tokenize(path));
+    return evalSingle(getFn, object, this.#tokenize(path));
   }
 
   static hasProperty(object, path, detailed = false) {
-    checkPath(path);
     checkObject(object);
-    return evalNotation(
-      detailed == true ? hasFn2 : hasFn,
+    return evalSingle(
+      detailed == true ? hasFnDetailed : hasFn,
       object,
       this.#tokenize(path)
     );
   }
 
   static removeProperty(object, path) {
-    checkPath(path);
     checkObject(object);
-    evalNotation(removeFn, object, this.#tokenize(path));
+    evalSingle(removeFn, object, this.#tokenize(path));
   }
 
   static deleteProperty(object, path) {
-    checkPath(path);
     checkObject(object);
-    evalNotation(removeFn, object, this.#tokenize(path));
+    evalSingle(removeFn, object, this.#tokenize(path));
   }
 
   static create(object, path) {
-    checkPath(path);
     checkObject(object);
-    evalNotation(createFn, object, this.#tokenize(path));
+    evalEvery(createFn, object, this.#tokenize(path));
   }
 
   static hasDetailed(object, path) {
-    checkPath(path);
     checkObject(object);
-    return evalNotation(hasFn2, object, this.#tokenize(path));
+    return evalEvery(hasFnDetailed, object, this.#tokenize(path));
   }
 
   static validate(path) {
@@ -105,9 +99,14 @@ class unPathify {
   }
 
   static #tokenize(path) {
+    if (typeof path !== "string") {
+      throw new SyntaxError("Invalid Notation Type");
+    }
+    if (path.length === 0) return "";
     if (Object.hasOwn(this.#cache, path)) {
       return this.#cache[path] || [];
     }
+
     checkNotation(path);
     var tokens = tokenizePath(path, this.#allowKeys).reverse();
     if (this.#currentSize > this.#cacheSize && this.#cacheSize !== -1) {
