@@ -5,7 +5,7 @@ const {
   getFn,
   hasFn,
   removeFn,
-  evalNotation,
+  evalSingle,
   deepKeysIterator,
 } = require("../src/lib.js");
 
@@ -54,12 +54,12 @@ describe("resolver", () => {
     ];
     deepEqual(deepKeysIterator(obj, []), paths);
   });
-  describe("evalNotation", function () {
+  describe("evalSingle", function () {
     it("throw Error", function () {
-      throws(() => evalNotation());
-      throws(() => evalNotation(true));
-      throws(() => evalNotation({}));
-      doesNotThrow(() => evalNotation(() => {}, {}, []));
+      throws(() => evalSingle());
+      throws(() => evalSingle(true));
+      throws(() => evalSingle({}));
+      doesNotThrow(() => evalSingle(() => {}, {}, []));
     });
     it("eval", function () {
       let obj = {
@@ -68,15 +68,15 @@ describe("resolver", () => {
         c: [[], [[[{ v: { f: { e: 5 } } }]]]],
       };
       let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
-      deepEqual(evalNotation(getFn, obj, []), obj);
-      deepEqual(evalNotation(getFn, obj, ["b", "b"]), 2);
-      deepEqual(evalNotation(getFn, obj, ["c", "b"]), [3, 4]);
-      deepEqual(evalNotation(getFn, obj, ["n", "0", "a"]), {});
-      deepEqual(evalNotation(getFn, obj, tokens), 5);
-      doesNotThrow(() => evalNotation(getFn, obj, ["g"]));
-      doesNotThrow(() => evalNotation(getFn, obj, ["0"]));
-      doesNotThrow(() => evalNotation(getFn, obj, ["2", "a"]));
-      throws(() => evalNotation(getFn, obj, ["n", "2", "a"]));
+      deepEqual(evalSingle(getFn, obj, []), obj);
+      deepEqual(evalSingle(getFn, obj, ["b", "b"]), 2);
+      deepEqual(evalSingle(getFn, obj, ["c", "b"]), [3, 4]);
+      deepEqual(evalSingle(getFn, obj, ["n", "0", "a"]), {});
+      deepEqual(evalSingle(getFn, obj, tokens), 5);
+      doesNotThrow(() => evalSingle(getFn, obj, ["g"]));
+      doesNotThrow(() => evalSingle(getFn, obj, ["0"]));
+      doesNotThrow(() => evalSingle(getFn, obj, ["2", "a"]));
+      throws(() => evalSingle(getFn, obj, ["n", "2", "a"]));
     });
   });
 });

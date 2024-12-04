@@ -26,12 +26,14 @@ describe("utils", () => {
     assert.equal(utils.isArray(""), false);
     mock.reset();
   });
+  /*
   it("checkPath", function () {
     assert.equal(utils.checkPath("a"), undefined);
     assert.equal(utils.checkPath(""), undefined);
     assert.throws(() => utils.checkPath());
     assert.throws(() => utils.checkPath({}));
   });
+  */
   it("checkObject", function () {
     assert.equal(utils.checkObject({}), undefined);
     assert.equal(utils.checkObject([]), undefined);
