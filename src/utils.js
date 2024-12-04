@@ -20,10 +20,6 @@ function checkObject(obj) {
     throw new SyntaxError("Invalid Object Type");
 }
 
-function checkPath(path) {
-  if (typeof path !== "string") throw new SyntaxError("Invalid Notation Type");
-}
-
 function checkTokens(tokens) {
   if (!isArray(tokens)) throw new TypeError("Invalid Token Array");
   for (let i = 0, len = path.length; i < len; i++) {
@@ -73,7 +69,6 @@ module.exports = {
   isArray,
   validCacheSize,
   checkObject,
-  checkPath,
   checkNotation,
   checkTokens,
 };
