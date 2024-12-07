@@ -32,20 +32,6 @@ const removeFn = function (data, obj, key) {
   } else delete obj[key];
 }.bind(null, null);
 
-const createFn = function (data, obj, key) {
-  if (!Object.hasOwn(obj, key)) obj[key] = {};
-}.bind(null, null);
-
-const hasFnDetailed = function (data, obj, key) {
-  if (!Object.hasOwn(obj, key)) {
-    return {
-      depth: func.depth,
-      failedKey: key,
-      currentObject: obj,
-    };
-  } else func.depth++;
-}.bind(null, null);
-
 function tokenizePath(path, allowKeys) {
   const res = [],
     reg = /\[\s*(\d+)(?=\s*])|\[\s*(["'`])((?:\\.|(?!\2).)*)\2\s*]|[\w$]+/g;
@@ -70,28 +56,38 @@ function evalProperty(obj, path) {
   return evalProperty(prop, path);
 }
 
-function evalEveryProperty(obj, path) {
-  let key = path.pop();
-  let out = func(obj, key);
-  if (out || path.length === 0) return out;
-  const prop = obj[key];
-  if (isNotObjectLike(prop)) {
-    throw new EvalError("Could not fully evaluate the object path");
+function evalHasDetailed(obj, path) {
+  const prop = obj[path.pop()];
+  if (isNotObjectLike(prop) && path.length !== 0) {
+    return {
+      depth: func.depth,
+      failedKey: key,
+      currentObject: obj,
+    };
   }
-  return evalEveryProperty(prop, path);
+  func.depth++;
+  return evalHasDetailed(prop, path);
+}
+
+function evalCreate(obj, path) {
+  if (path.length === 1) {
+    const key = path[0];
+    if (!Object.hasOwn(obj, key)) obj[key] = {};
+    return;
+  }
+  const key = path.pop();
+  let prop = obj[key];
+  if (isNotObjectLike(prop, key)) {
+    obj[key] = prop = {};
+  }
+  evalCreate(prop, path);
+  return obj;
 }
 
 function evalSingle(fn, obj, pathArr) {
   if (pathArr.length === 0) return obj;
   func = fn;
   return evalProperty(obj, pathArr.slice(0));
-}
-
-function evalEvery(fn, obj, pathArr) {
-  if (pathArr.length === 0) return obj;
-  func = fn;
-  func.depth = 0;
-  return evalEveryProperty(obj, pathArr.slice(0));
 }
 
 function escapePath(token) {
@@ -139,12 +135,11 @@ function deepKeysIterator(obj, path) {
 module.exports = {
   tokenizePath,
   evalSingle,
-  evalEvery,
+  evalCreate,
+  evalHasDetailed,
   deepKeysIterator,
   setFn,
   getFn,
   hasFn,
   removeFn,
-  createFn,
-  hasFnDetailed,
 };
