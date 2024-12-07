@@ -62,7 +62,7 @@ class unPathify {
 
   static hasDetailed(object, path) {
     checkObject(object);
-    return evalHasDetailed(object, this.#tokenize(path));
+    return evalHasDetailed(object, this.#tokenize(path), 0);
   }
 
   static validate(path) {
