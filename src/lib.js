@@ -64,7 +64,6 @@ function tokenizePath(path, allowKeys) {
 function evalProperty(obj, path) {
   if (path.length === 1) return func(obj, path[0]);
   const prop = obj[path.pop()];
-  //if (path.length === 0) return prop;
   if (isNotObjectLike(prop)) {
     throw new EvalError("Could not fully evaluate the object path");
   }
@@ -101,18 +100,6 @@ function escapePath(token) {
   }
   return token;
 }
-
-/*
-function entries(value) {
-  if (isArray(value)) {
-    let acc = [];
-    let i = 0;
-    for (; i < value.length; i++) acc.push([i, value[i]]);
-    return acc;
-  }
-  return Object.entries(value);
-}
-*/
 
 function stringifyPath(tokens) {
   let result = "";

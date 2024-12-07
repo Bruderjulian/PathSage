@@ -40,11 +40,10 @@ class unPathify {
 
   static hasProperty(object, path, detailed = false) {
     checkObject(object);
-    return evalSingle(
-      detailed == true ? hasFnDetailed : hasFn,
-      object,
-      this.#tokenize(path)
-    );
+    if (detailed === true) {
+      return evalEvery(hasFnDetailed, object, this.#tokenize(path));
+    }
+    return evalSingle(hasFn, object, this.#tokenize(path));
   }
 
   static removeProperty(object, path) {
