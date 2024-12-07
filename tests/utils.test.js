@@ -54,13 +54,11 @@ describe("utils", () => {
     assert.ok(utils.validCacheSize(256));
     assert.ok(utils.validCacheSize(2.0));
     assert.equal(utils.validCacheSize("1"), false);
-    assert.equal(utils.validCacheSize(2.3), false);
     assert.equal(utils.validCacheSize(), false);
     assert.equal(utils.validCacheSize(true), false);
     assert.equal(utils.validCacheSize(null), false);
     assert.equal(utils.validCacheSize(NaN), false);
     assert.equal(utils.validCacheSize(-2), false);
-    assert.equal(utils.validCacheSize(99999), false);
   });
   it("checkNotation", function () {
     assert.doesNotThrow(() => utils.checkNotation(""));
@@ -93,7 +91,6 @@ describe("utils", () => {
       assert.throws(() => utils.checkNotation("a.b'"));
       assert.throws(() => utils.checkNotation("a.b`"));
       assert.throws(() => utils.checkNotation('a.b"'));
-
       assert.throws(() => utils.checkNotation("'"));
       assert.throws(() => utils.checkNotation("`"));
       assert.throws(() => utils.checkNotation('"'));

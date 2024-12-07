@@ -35,6 +35,13 @@ describe("API Tests", function () {
     state = unPathify._getPrivates();
     deepEqual(state.allowKeys, false);
     deepEqual(state.cacheSize, 16);
+
+    unPathify.configure({
+      cacheSize: 2.3,
+    });
+    state = unPathify._getPrivates();
+    deepEqual(state.allowKeys, false);
+    deepEqual(state.cacheSize, 2);
   });
 
   it("must remove Test Methods", function () {
