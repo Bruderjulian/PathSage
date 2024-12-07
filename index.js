@@ -2,11 +2,10 @@ const {
   tokenizePath,
   evalSingle,
   evalCreate,
-  evalHasDetailed,
+  evalHas,
   deepKeysIterator,
   setFn,
   getFn,
-  hasFn,
   removeFn,
 } = require("./src/lib");
 
@@ -39,10 +38,7 @@ class unPathify {
 
   static hasProperty(object, path, detailed = false) {
     checkObject(object);
-    if (detailed === true) {
-      return evalHasDetailed(object, this.#tokenize(path));
-    }
-    return evalSingle(hasFn, object, this.#tokenize(path));
+    return evalHas(object, this.#tokenize(path), 0, detailed);
   }
 
   static removeProperty(object, path) {
@@ -58,11 +54,6 @@ class unPathify {
   static create(object, path) {
     checkObject(object);
     evalCreate(object, this.#tokenize(path));
-  }
-
-  static hasDetailed(object, path) {
-    checkObject(object);
-    return evalHasDetailed(object, this.#tokenize(path), 0);
   }
 
   static validate(path) {

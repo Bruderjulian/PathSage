@@ -21,10 +21,6 @@ const setFn = function (data, obj, key) {
   obj[key] = data;
 };
 
-const hasFn = function (data, obj, key) {
-  return Object.hasOwn(obj, key);
-}.bind(null, null);
-
 const removeFn = function (data, obj, key) {
   if (isArray(obj)) {
     key = parseInt(key, 10);
@@ -57,19 +53,19 @@ function evalProperty(obj, path) {
   return evalProperty(prop, path);
 }
 
-function evalHasDetailed(obj, path, depth) {
-  if (path.length === 0) return null;
+function evalHas(obj, path, depth, detailed) {
+  if (path.length === 0) return true;
   const key = path.pop();
   const prop = obj[key];
   if ((isNotObjectLike(prop) && path.length !== 0) || !Object.hasOwn(obj, key)) {
-    return {
+    return detailed ? {
       depth: depth,
       left: path.length,
       failedKey: key,
       currentObject: obj,
-    };
+    } : false;
   }
-  return evalHasDetailed(prop, path, ++depth);
+  return evalHas(prop, path, ++depth, detailed);
 }
 
 function evalCreate(obj, path) {
@@ -139,10 +135,9 @@ module.exports = {
   tokenizePath,
   evalSingle,
   evalCreate,
-  evalHasDetailed,
+  evalHas,
   deepKeysIterator,
   setFn,
   getFn,
-  hasFn,
   removeFn,
 };
