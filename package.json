@@ -4,6 +4,7 @@
   "description": "An awesome Object-path notation library",
   "main": "index.js",
   "types": "./index.d.ts",
+  "exports": "./index.js",
   "scripts": {
     "test": "node --test"
   },
