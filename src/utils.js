@@ -6,11 +6,7 @@ function isNotObjectLike(obj) {
 
 //hardcoded limit at 256 for now
 function validCacheSize(size) {
-  return (
-    typeof size === "number" &&
-    !isNaN(size) &&
-    size >= -1
-  );
+  return typeof size === "number" && !isNaN(size) && size >= -1;
 }
 
 function checkObject(obj) {
