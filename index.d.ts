@@ -7,14 +7,14 @@ export interface HasResult {
 }
 
 /**
- * static class containing the API for modifying nested objects with dot/bracket notation
+ * Library for working with nested objects with path notations
  * @name unPathify
  * @author BruderJulian <https://github.com/Bruderjulian>
- * @version 1.1
+ * @version 1.2
  */
 export declare class unPathify {
   /**
-   *  Set the property at the given path to the given value.
+   *  Set a property at a given path to a given value.
    *  @param {ObjectLike} object - Object or array to set the value in
    *  @param {string} path - Path of the property, using the notation
    *  @param {unknown} value - the value to set
@@ -24,7 +24,7 @@ export declare class unPathify {
   static setProperty(object: ObjectLike, path: string, value: unknown): void;
 
   /**
-   *  Get the value of the property at the given path.
+   *  Get the value of a property in an Object at a given path.
    *  @param {ObjectLike} object - Object or array to get the value from.
    *  @param {string} path - Path of the property, using the notation
    *  @returns {unknown} - the value of the property
@@ -34,7 +34,7 @@ export declare class unPathify {
   static getProperty(object: ObjectLike, path: string): unknown;
 
   /**
-   *  Check whether the property at the given path exists.
+   *  Check whether a property in an Object at a given path exists.
    *  @param {ObjectLike} object - Object or array to check.
    *  @param {string} path - Path of the property, using the notation
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
@@ -47,7 +47,7 @@ export declare class unPathify {
   ): boolean | HasResult;
 
   /**
-   * Remove the property at the given path.
+   *  Remove a property from an Object at a given path.
    *  @param {ObjectLike} object - Object or array to remove the property from.
    *  @param {string} path - Path of the property, using the notation
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
@@ -56,7 +56,7 @@ export declare class unPathify {
   static removeProperty(object: ObjectLike, path: string): void;
 
   /**
-   * Remove the property at the given path.
+   * Remove a property in an Object at a given path.
    * @param {ObjectLike} object - Object or array to remove the property from.
    * @param {string} path - Path of the property, using the notation
    * @alias removeProperty
@@ -81,7 +81,7 @@ export declare class unPathify {
   static getPaths(object: ObjectLike): string[];
 
   /**
-   * configures the parser and cache
+   * Configures the cache, tokenizer and validator.
    * @param {object} [options]
    * @param {boolean} options.allowKeys - allows special keys (.constructor, .prototype, etc).
    * @param {boolean} options.cacheSize - defines the cache size (if equal to -1, the cache won't be cleared)

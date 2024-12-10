@@ -1,6 +1,6 @@
 # UnPathify
 
-A lightweight utility library for manipulating and accessing nested objects and arrays using path notation. With features like path tokenization, rudimentary caching and simple configuration, **UnPathify** makes working with nested data more efficient and easy-to-use.
+An advanced library for manipulating and accessing nested objects and arrays using path notation. With features like path tokenization, rudimentary caching and simple configuration, **UnPathify** makes working with nested data more efficient and easy-to-use.
 
 ## Table of Contents
 
@@ -8,32 +8,42 @@ A lightweight utility library for manipulating and accessing nested objects and 
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [API](#api)
+- [Performance](#performance)
+- [Size](#size)
 - [Contributing](#contributing)
+- [Testing](#testing)
 - [License](#license)
+- [Authors](#authors)
 
 ---
 
 ## Introduction
 
-**UnPathify** provides a suite of static methods for handling deeply nested properties within objects and arrays. The library leverages caching to enhance performance and adaptability.
+**UnPathify** provides a suite of static methods for handling deeply nested properties within objects and arrays. The library uses caching to enhance performance.
 
 ## Features
 
-- **Path Operations:** Access, modify, check, and remove properties/elements using string paths.
+- **Comprehensive API:** Set, get, modify, has, remove and create properties and validate and analyze Path Notations.
 - **Path Tokenization:** Efficiently tokenizes and caches paths for repeated use.
+- **Fast & Compact:** Being extremely fast and efficient ([Performance](#performance)) while being very small with only 1Kb ([Size](#size)).
 - **Validation:** Validation of invalid inputs and paths.
-- **Types/Docs:** Integrated Types and JSDoc comments for interacting with it.
-- **Testing:** Test for all components. (over 40 Tests with 100% coverage).
-- **Configuration Options:** Customize parsing behavior, cache size, and allowed Special keys.
-- **Cache Management:** Automatically manages and clears the cache in a smart but simple way.
+- **Configuration Options:** Limit cache size, allow Special keys and more. See [Configuration](#configuration).
+- **Types/Docs:** Integrated Types and JSDoc comments for better useability.
+- **Testing:** Test for all components. (over 40 Tests with 100% coverage. See [Testing](#testing)).
 
 ## Installation
 
-Install the library via npm:
+Install the library via [npm](https://www.npmjs.com):
 
 ```bash
 npm install unpathify
+```
+
+and import it!
+
+```javascript
+//require
+const { unPathify } = require("unpathify");
 ```
 
 ## Usage
@@ -46,24 +56,21 @@ The library exposes the following static methods:
 - **removeProperty() / deleteProperty()**: Removes a property from the specified path.
 - **keys() / getPaths()**: Lists all paths within an object.
 - **clearCache()**: Clears the entire cache.
-- **clearCacheSmart()**: Clears the least-used paths from the cache.
 - **configure()**: Configures settings.
 
-## API
+Most methods accept an Object-Like argument, which means it could be a plain `Object`, an `Array` or a `Class`. It can't also be `Null` or `undefined`.
 
-All methods (except `configure`) accept an Object-Like argument, which means it could be a plain Object, an Array or a Class.
+If any special keys or the function Syntax is used you need to enable it (See [Configuration](#configuration))!
 
-If any special keys or the function Syntax is used you need to enable it (See [Configure](#configureoptions-object))
+---
 
 ### setProperty(object: ObjectLike, path: String, value: any)
 
-sets a value of a property from an
+Set the property at a given path to a given value.
 
 #### Example:
 
 ```javascript
-//require library
-const unPathify = require("unpathify");
 const obj = { user: { profile: { name: "Alice" } } };
 
 // Set a value
@@ -72,31 +79,35 @@ unPathify.setProperty(obj, "user.profile.age", 30);
 
 ### getProperty(object: ObjectLike, path: String)
 
+Get the value of the property in an Object at a given path.
+
 #### Example:
 
 ```javascript
-// Get a value
-const age = unPathify.getProperty(obj, 'user.profile.age');
+const age = unPathify.getProperty(obj, "user.profile.age");
 console.log(age); // Output: 30
-Checking and Removing a Property
 ```
 
 ### hasProperty(object: ObjectLike, path: String)
 
+Check whether a property exists in an Object at a given path.
+
 #### Example:
 
 ```javascript
-// Check if a property exists
 const exists = unPathify.hasProperty(obj, "user.profile.age");
 console.log(exists); // Output: true
 ```
 
 ### removeProperty(object: ObjectLike, path: String)
 
+Remove a property from an Object at a given path.
+
+#### Aliases: deleteProperty()
+
 #### Example:
 
 ```javascript
-// Remove the property
 unPathify.removeProperty(obj, "user.profile.age");
 console.log(unPathify.hasProperty(obj, "user.profile.age"));
 // Output: false
@@ -104,7 +115,7 @@ console.log(unPathify.hasProperty(obj, "user.profile.age"));
 
 ### keys(object: ObjectLike) / getPaths(object: ObjectLike)
 
-gets all Paths from an Object or Array by traversing through it. Empty Objects or Array will be skipped.
+Returns an array including every path. Non-empty objects or arrays are iterated and not included themselves.
 
 #### Aliases: getPaths()
 
@@ -120,31 +131,34 @@ console.log(paths2); // Output: ['user.profile.name']
 
 ### configure(options?: Object)
 
-configures the cache and the parser/tokenizer.
-
-#### Options:
-
-| Name      | Description                              | Type    | Default |
-| --------- | ---------------------------------------- | ------- | ------- |
-| allowKeys | allows special Keys                      | boolean | false   |
-| cacheSize | An Integer representing the maximum size | number  | 16      |
-
-**allowKeys**: Allow these special keys "constructor", "prototype", "this" and "\_\_proto\_\_".
-<br>
-**cacheSize**: Limits the cache size by smartly clearing it.
-Use -1 for unlimited size.
+Configures the cache, tokenizer and validator.
 
 #### Example:
 
 ```javascript
 unPathify.configure({
   allowKeys: true,
-  parseNumbers: true,
-  cacheSize: 32,
+  cacheSize: 8,
 });
 ```
 
----
+## Configuration:
+
+List of all available Options:
+
+| Name      | Description            | Type    | Default       |
+| --------- | ---------------------- | ------- | ------------- |
+| allowKeys | allows special keys    | boolean | false         |
+| cacheSize | the maximum cache size | number  | -1 (disabled) |
+
+**AllowKeys:** Allow these special keys `constructor`, `prototype`, `this` and `__proto__`.
+Enabling it could potentially open security issues!!
+<br>
+**CacheSize:** Limits the cache size by clearing it. Use -1 to disable the limit.
+
+## Performance
+
+## Size
 
 ## Contributing
 
@@ -152,16 +166,20 @@ Contributions are alway welcome! Just open an issue or submit a request
 
 Let me know if you would like to refine or add features to something!
 
-## Running Tests
+## Testing
 
-To run tests, first install locally and then run the following command
+To run tests, first clone repo and then run the following command:
 
 ```bash
-  npm run test
+npm run test
 ```
 
 ## License
 
-MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [License](LICENSE) for details.
 
-Developed by [@BruderJulian](https://www.github.com/BruderJulian).
+# Authors
+
+Developed and maintained by [@BruderJulian](https://www.github.com/BruderJulian).
+
+Some internal parts are based from [path-value](https://github.com/vitaly-t/path-value) by Vitaly Tomilov.
