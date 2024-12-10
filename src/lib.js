@@ -90,7 +90,7 @@ function evalCreate(obj, path) {
 function evalSingle(fn, obj, pathArr) {
   if (pathArr.length === 0) return obj;
   func = fn;
-  return evalProperty(obj, pathArr.slice(0));
+  return evalProperty(obj, pathArr);
 }
 
 function escapePath(token) {

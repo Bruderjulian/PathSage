@@ -1,7 +1,5 @@
-const isArray = Array.isArray;
-
-function isNotObjectLike(obj) {
-  return typeof obj !== "object" || obj === null;
+function isObject(obj) {
+  return typeof obj === "object" && !Array.isArray(obj) && obj !== null;
 }
 
 //hardcoded limit at 256 for now
@@ -59,8 +57,7 @@ function checkQuotes(path) {
 }
 
 module.exports = {
-  isNotObjectLike,
-  isArray,
+  isObject,
   validCacheSize,
   checkObject,
   checkNotation,

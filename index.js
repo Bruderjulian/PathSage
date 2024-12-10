@@ -10,11 +10,10 @@ const {
 } = require("./src/lib");
 
 const {
-  isNotObjectLike,
+  isObject,
   validCacheSize,
   checkObject,
   checkNotation,
-  isArray,
   checkTokens,
 } = require("./src/utils");
 
@@ -54,7 +53,7 @@ class unPathify {
   }
 
   static validate(path) {
-    if (isArray(path)) checkTokens(path);
+    if (Array.isArray(path)) checkTokens(path);
     else checkNotation(path);
   }
 
@@ -74,8 +73,9 @@ class unPathify {
   }
 
   static configure(options = {}) {
-    if (isNotObjectLike(options) || isArray(options))
+    if (!isObject(options)) {
       throw new TypeError("Invalid Options Type");
+    }
     if (typeof options.allowKeys === "boolean") {
       allowKeys = options.allowKeys;
     }
@@ -85,22 +85,18 @@ class unPathify {
 }
 
 function tokenize(path) {
-  if (typeof path !== "string") {
-    throw new SyntaxError("Invalid Notation Type");
-  }
-  if (path.length === 0) return "";
   if (Object.hasOwn(cache, path)) {
-    return cache[path] || [];
+    return cache[path].slice(0) || [];
   }
-
   checkNotation(path);
   var tokens = tokenizePath(path, allowKeys).reverse();
   if (currentSize > cacheSize && cacheSize !== -1) {
-    this.clearCache();
+    cache = {};
+    currentSize = 0;
   }
   cache[path] = tokens;
   currentSize++;
-  return tokens;
+  return tokens.slice(0);
 }
 
 function getPrivates() {
@@ -112,4 +108,4 @@ function getPrivates() {
   };
 }
 
-module.exports = {unPathify, getPrivates};
+module.exports = { unPathify, getPrivates };
