@@ -17,43 +17,40 @@ const {
   isArray,
   checkTokens,
 } = require("./src/utils");
-const env = require("process").env.NODE_ENV || "prod";
 
-// Todo: test EvalErrors, Class Key Iteration
+var cache = {};
+var allowKeys = false;
+var currentSize = 0;
+var cacheSize = -1;
 class unPathify {
-  static #cache = {};
-  static #allowKeys = false;
-  static #currentSize = 0;
-  static #cacheSize = -1;
-
   static setProperty(object, path, value) {
     checkObject(object);
-    evalSingle(setFn.bind(null, value), object, this.#tokenize(path));
+    evalSingle(setFn.bind(null, value), object, tokenize(path));
   }
 
   static getProperty(object, path) {
     checkObject(object);
-    return evalSingle(getFn, object, this.#tokenize(path));
+    return evalSingle(getFn, object, tokenize(path));
   }
 
   static hasProperty(object, path, detailed = false) {
     checkObject(object);
-    return evalHas(object, this.#tokenize(path), 0, detailed);
+    return evalHas(object, tokenize(path), 0, detailed);
   }
 
   static removeProperty(object, path) {
     checkObject(object);
-    evalSingle(removeFn, object, this.#tokenize(path));
+    evalSingle(removeFn, object, tokenize(path));
   }
 
   static deleteProperty(object, path) {
     checkObject(object);
-    evalSingle(removeFn, object, this.#tokenize(path));
+    evalSingle(removeFn, object, tokenize(path));
   }
 
   static create(object, path) {
     checkObject(object);
-    evalCreate(object, this.#tokenize(path));
+    evalCreate(object, tokenize(path));
   }
 
   static validate(path) {
@@ -72,52 +69,47 @@ class unPathify {
   }
 
   static clearCache() {
-    this.#cache = {};
-    this.#currentSize = 0;
+    cache = {};
+    currentSize = 0;
   }
 
   static configure(options = {}) {
     if (isNotObjectLike(options) || isArray(options))
       throw new TypeError("Invalid Options Type");
     if (typeof options.allowKeys === "boolean") {
-      this.#allowKeys = options.allowKeys;
+      allowKeys = options.allowKeys;
     }
     let size = parseInt(options.cacheSize, 10);
-    if (validCacheSize(size)) this.#cacheSize = size;
-  }
-
-  static #tokenize(path) {
-    if (typeof path !== "string") {
-      throw new SyntaxError("Invalid Notation Type");
-    }
-    if (path.length === 0) return "";
-    if (Object.hasOwn(this.#cache, path)) {
-      return this.#cache[path] || [];
-    }
-
-    checkNotation(path);
-    var tokens = tokenizePath(path, this.#allowKeys).reverse();
-    if (this.#currentSize > this.#cacheSize && this.#cacheSize !== -1) {
-      this.clearCache();
-    }
-    this.#cache[path] = tokens;
-    this.#currentSize++;
-    return tokens;
-  }
-
-  static _getPrivates() {
-    if (env !== "test") return;
-    return {
-      cache: this.#cache,
-      cacheSize: this.#cacheSize,
-      currentSize: this.#currentSize,
-      allowKeys: this.#allowKeys,
-    };
+    if (validCacheSize(size)) cacheSize = size;
   }
 }
 
-if (env !== "test") {
-  unPathify._getPrivates = undefined;
-  delete unPathify._getPrivates;
+function tokenize(path) {
+  if (typeof path !== "string") {
+    throw new SyntaxError("Invalid Notation Type");
+  }
+  if (path.length === 0) return "";
+  if (Object.hasOwn(cache, path)) {
+    return cache[path] || [];
+  }
+
+  checkNotation(path);
+  var tokens = tokenizePath(path, allowKeys).reverse();
+  if (currentSize > cacheSize && cacheSize !== -1) {
+    this.clearCache();
+  }
+  cache[path] = tokens;
+  currentSize++;
+  return tokens;
 }
-module.exports = unPathify;
+
+function getPrivates() {
+  return {
+    cache: cache,
+    cacheSize: cacheSize,
+    currentSize: currentSize,
+    allowKeys: allowKeys,
+  };
+}
+
+module.exports = {unPathify, getPrivates};
