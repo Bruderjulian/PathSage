@@ -4,7 +4,6 @@ function isNotObjectLike(obj) {
 }
 
 var func;
-var depth = 0;
 const disallowedTokens = new Set([
   "this",
   "__proto__",
@@ -57,13 +56,18 @@ function evalHas(obj, path, depth, detailed) {
   if (path.length === 0) return true;
   const key = path.pop();
   const prop = obj[key];
-  if ((isNotObjectLike(prop) && path.length !== 0) || !Object.hasOwn(obj, key)) {
-    return detailed ? {
-      depth: depth,
-      left: path.length,
-      failedKey: key,
-      currentObject: obj,
-    } : false;
+  if (
+    (isNotObjectLike(prop) && path.length !== 0) ||
+    !Object.hasOwn(obj, key)
+  ) {
+    return detailed
+      ? {
+          depth: depth,
+          left: path.length,
+          failedKey: key,
+          currentObject: obj,
+        }
+      : false;
   }
   return evalHas(prop, path, ++depth, detailed);
 }
