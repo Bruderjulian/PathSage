@@ -1,8 +1,8 @@
 type ObjectLike = object | unknown[];
 export interface HasResult {
   depth: number;
-  Left: number;
-  object: ObjectLike;
+  left: number;
+  currentObject: ObjectLike;
   key: String;
 }
 
@@ -38,7 +38,14 @@ export declare class unPathify {
    *  @param {ObjectLike} object - Object or array to check.
    *  @param {string} path - Path of the property, using the notation
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
-   *  @throws {EvalError} - if the path could not be fully evaluated.
+   */
+  static hasProperty(object: ObjectLike, path: string): boolean;
+
+  /**
+   *  Check whether a property in an Object at a given path exists. If not, it returns a more detailed report
+   *  @param {ObjectLike} object - Object or array to check.
+   *  @param {string} path - Path of the property, using the notation
+   *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
    */
   static hasProperty(
     object: ObjectLike,
