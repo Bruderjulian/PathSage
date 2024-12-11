@@ -10,7 +10,7 @@ const {
   deepKeysIterator,
 } = require("../src/lib.js");
 
-describe("resolver", () => {
+describe("resolvers", () => {
   it("Operator Exists", function () {
     equal(typeof Function.bind, "function", "Binding is not available");
     equal(typeof setFn, "function");

@@ -1,4 +1,4 @@
-const { deepEqual, throws, equal } = require("node:assert");
+const { deepEqual, throws, equal, doesNotThrow } = require("node:assert");
 const { describe, it } = require("node:test");
 const { unPathify, getPrivates } = require("../index.js");
 
@@ -14,6 +14,8 @@ describe("API Tests", function () {
     deepEqual(state, defaults);
   });
   it("must handle configurations", function () {
+    doesNotThrow(() => unPathify.configure());
+    throws(() => unPathify.configure(true));
     unPathify.configure({
       allowKeys: true,
       cacheSize: 32,
@@ -36,10 +38,17 @@ describe("API Tests", function () {
     deepEqual(state.cacheSize, 16);
 
     unPathify.configure({
+      allowKeys: true,
+    });
+    state = getPrivates();
+    deepEqual(state.allowKeys, true);
+    deepEqual(state.cacheSize, 16);
+
+    unPathify.configure({
       cacheSize: 2.3,
     });
     state = getPrivates();
-    deepEqual(state.allowKeys, false);
+    deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 2);
   });
 
@@ -109,12 +118,26 @@ describe("API Tests", function () {
     throws(() => unPathify.deleteProperty({}, undefined));
     throws(() => unPathify.deleteProperty(undefined, undefined));
 
+    throws(() => unPathify.create(1, ""));
+    throws(() => unPathify.create({}, {}));
+    throws(() => unPathify.create({}, []));
+    throws(() => unPathify.create({}, 1));
+    throws(() => unPathify.create({}, undefined));
+    doesNotThrow(() => unPathify.create(undefined, undefined));
+    doesNotThrow(() => unPathify.create(undefined, ""));
+
     throws(() => unPathify.keys(""));
     throws(() => unPathify.keys(true));
     throws(() => unPathify.keys(undefined));
     throws(() => unPathify.getPaths(""));
     throws(() => unPathify.getPaths(true));
     throws(() => unPathify.getPaths(undefined));
+
+    throws(() => unPathify.validate(true));
+    throws(() => unPathify.validate(undefined));
+    throws(() => unPathify.validate({}));
+    doesNotThrow(() => unPathify.validate([]));
+    doesNotThrow(() => unPathify.validate(""));
   });
 
   it("evaluate Keys", function () {
@@ -129,6 +152,28 @@ describe("API Tests", function () {
     deepEqual(out, ["0", "1"]);
     deepEqual(out2, ["0", "1"]);
     deepEqual(out, out2);
+  });
+
+  it("validate Tokens", function () {
+    doesNotThrow(() => unPathify.validate([]));
+    doesNotThrow(() => unPathify.validate(["a"]));
+    doesNotThrow(() => unPathify.validate(["a", "1"]));
+    throws(() => unPathify.validate([1]));
+    throws(() => unPathify.validate([true]));
+    throws(() => unPathify.validate([[]]));
+    throws(() => unPathify.validate([{}]));
+    throws(() => unPathify.validate(["1", 1]));
+  });
+
+  it("validate String", function () {
+    doesNotThrow(() => unPathify.validate(""));
+    doesNotThrow(() => unPathify.validate("[]"));
+    doesNotThrow(() => unPathify.validate("a.1"));
+    doesNotThrow(() => unPathify.validate("a.[1]"));
+    throws(() => unPathify.validate("[[]}"));
+    throws(() => unPathify.validate("{{}]"));
+    throws(() => unPathify.validate("'''"));
+    throws(() => unPathify.validate("```"));
   });
 
   it("setProperty", function () {
@@ -163,13 +208,17 @@ describe("API Tests", function () {
   it("hasProperty", function () {
     clearCache();
     let obj = { a: [1, 2], b: 4 };
-    let out = unPathify.hasProperty(obj, "a[0]", 0, false);
+    let out = unPathify.hasProperty(obj, "a[0]", false);
     deepEqual(out, true);
     deepEqual(obj, { a: [1, 2], b: 4 });
     testCache();
 
-    out = unPathify.hasProperty(obj, "c", 0, false);
+    out = unPathify.hasProperty(obj, "c", false);
     deepEqual(out, false);
+    deepEqual(obj, { a: [1, 2], b: 4 });
+
+    out = unPathify.hasProperty(obj, "c", true);
+    deepEqual(out, { depth: 0, left: 1, failedKey: "c", currentObject: obj });
     deepEqual(obj, { a: [1, 2], b: 4 });
   });
 
