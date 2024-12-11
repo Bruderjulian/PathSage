@@ -34,7 +34,7 @@ class unPathify {
 
   static hasProperty(object, path, detailed = false) {
     checkObject(object);
-    return evalHas(object, tokenize(path), 0, detailed);
+    return evalHas(object, tokenize(path), detailed, 0);
   }
 
   static removeProperty(object, path) {
@@ -48,6 +48,7 @@ class unPathify {
   }
 
   static create(object, path) {
+    if (object === undefined) return {};
     checkObject(object);
     evalCreate(object, tokenize(path));
   }
@@ -90,12 +91,11 @@ function tokenize(path) {
   }
   checkNotation(path);
   var tokens = tokenizePath(path, allowKeys).reverse();
-  if (currentSize > cacheSize && cacheSize !== -1) {
+  if (++currentSize > cacheSize && cacheSize !== -1) {
     cache = {};
-    currentSize = 0;
+    currentSize = 1;
   }
   cache[path] = tokens;
-  currentSize++;
   return tokens.slice(0);
 }
 

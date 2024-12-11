@@ -52,7 +52,7 @@ function evalProperty(obj, path) {
   return evalProperty(prop, path);
 }
 
-function evalHas(obj, path, depth, detailed) {
+function evalHas(obj, path, detailed, depth) {
   if (path.length === 0) return true;
   const key = path.pop();
   const prop = obj[key];
@@ -63,20 +63,20 @@ function evalHas(obj, path, depth, detailed) {
     return detailed
       ? {
           depth: depth,
-          left: path.length,
+          left: ++path.length,
           failedKey: key,
           currentObject: obj,
         }
       : false;
   }
-  return evalHas(prop, path, ++depth, detailed);
+  return evalHas(prop, path, detailed, ++depth);
 }
 
 function evalCreate(obj, path) {
   if (path.length === 1) {
     const key = path[0];
     if (!Object.hasOwn(obj, key)) obj[key] = {};
-    return;
+    return obj;
   }
   const key = path.pop();
   let prop = obj[key];
