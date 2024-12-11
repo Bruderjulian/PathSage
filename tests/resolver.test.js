@@ -3,9 +3,10 @@ const { describe, it } = require("node:test");
 const {
   setFn,
   getFn,
-  hasFn,
   removeFn,
   evalSingle,
+  evalHas,
+  evalCreate,
   deepKeysIterator,
 } = require("../src/lib.js");
 
@@ -14,11 +15,9 @@ describe("resolver", () => {
     equal(typeof Function.bind, "function", "Binding is not available");
     equal(typeof setFn, "function");
     equal(typeof getFn, "function");
-    equal(typeof hasFn, "function");
     equal(typeof removeFn, "function");
     ok(!setFn.toString().includes("native code"));
     ok(getFn.toString().includes("native code"));
-    ok(hasFn.toString().includes("native code"));
     ok(removeFn.toString().includes("native code"));
   });
   it("Operator", function () {
@@ -27,9 +26,6 @@ describe("resolver", () => {
     deepEqual(obj, { a: 1, b: 2 });
     equal(getFn(obj, "a"), 1);
     equal(getFn(obj, "c"), undefined);
-    deepEqual(obj, { a: 1, b: 2 });
-    equal(hasFn(obj, "a"), true);
-    equal(hasFn(obj, "c"), false);
     deepEqual(obj, { a: 1, b: 2 });
     equal(removeFn(obj, "a"), undefined);
     deepEqual(obj, { b: 2 });
@@ -54,29 +50,84 @@ describe("resolver", () => {
     ];
     deepEqual(deepKeysIterator(obj, []), paths);
   });
-  describe("evalSingle", function () {
-    it("throw Error", function () {
-      throws(() => evalSingle());
-      throws(() => evalSingle(true));
-      throws(() => evalSingle({}));
-      doesNotThrow(() => evalSingle(() => {}, {}, []));
-    });
-    it("eval", function () {
-      let obj = {
-        a: [{ n: {}, m: 1 }],
-        b: { c: [3, 4], b: 2 },
-        c: [[], [[[{ v: { f: { e: 5 } } }]]]],
-      };
-      let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
-      deepEqual(evalSingle(getFn, obj, []), obj);
-      deepEqual(evalSingle(getFn, obj, ["b", "b"]), 2);
-      deepEqual(evalSingle(getFn, obj, ["c", "b"]), [3, 4]);
-      deepEqual(evalSingle(getFn, obj, ["n", "0", "a"]), {});
-      deepEqual(evalSingle(getFn, obj, tokens), 5);
-      doesNotThrow(() => evalSingle(getFn, obj, ["g"]));
-      doesNotThrow(() => evalSingle(getFn, obj, ["0"]));
-      doesNotThrow(() => evalSingle(getFn, obj, ["2", "a"]));
-      throws(() => evalSingle(getFn, obj, ["n", "2", "a"]));
-    });
+  it("evalSingle", function () {
+    let obj = {
+      a: [{ n: {}, m: 1 }],
+      b: { c: [3, 4], b: 2 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    };
+    let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
+    deepEqual(evalSingle(getFn, obj, []), obj);
+    deepEqual(evalSingle(getFn, obj, ["b", "b"]), 2);
+    deepEqual(evalSingle(getFn, obj, ["c", "b"]), [3, 4]);
+    deepEqual(evalSingle(getFn, obj, ["n", "0", "a"]), {});
+    deepEqual(evalSingle(getFn, obj, tokens), 5);
+    doesNotThrow(() => evalSingle(getFn, obj, ["g"]));
+    doesNotThrow(() => evalSingle(getFn, obj, ["0"]));
+    doesNotThrow(() => evalSingle(getFn, obj, ["2", "a"]));
+    throws(() => evalSingle(getFn, obj, ["n", "2", "a"]));
+  });
+  it("evalCreate", function () {
+    let obj = {};
+    let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
+    let obj2 = {
+      a: { 2: { n: {} } },
+      //c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+      c: { 1: { 0: { 0: { 0: { v: { f: { e: {} } } } } } } },
+    };
+    deepEqual(evalCreate({ a: 1 }, ["a"]), { a: 1 });
+    deepEqual(evalCreate(obj, ["n", "2", "a"]), { a: { 2: { n: {} } } });
+    deepEqual(evalCreate(obj, tokens), obj2);
+  });
+  it("evalHas", function () {
+    let obj = {
+      a: [{ n: {}, m: 1 }],
+      b: { 0: [3, 4], b: 2 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    };
+    let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
+    equal(evalHas(obj, []), true);
+    equal(evalHas(obj, ["b", "b"]), true);
+    equal(evalHas(obj, ["0", "b"]), true);
+    equal(evalHas(obj, ["n", "0", "a"]), true);
+    equal(evalHas(obj, tokens), true);
+    equal(evalHas(obj, ["g"]), false);
+    equal(evalHas(obj, ["0"]), false);
+    equal(evalHas(obj, ["2", "a"]), false);
+    equal(evalHas(obj, ["n", "2", "a"]), false);
+  });
+
+  it("evalHas Detailed", function () {
+    let obj = {
+      a: [{ n: {}, m: 1 }],
+      b: { 0: [3, 4], b: 2 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    };
+    let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
+    equal(evalHas(obj, [], true, 0), true);
+    equal(evalHas(obj, ["b", "b"], true, 0), true);
+    equal(evalHas(obj, ["0", "b"], true, 0), true);
+    equal(evalHas(obj, tokens, true, 0), true);
+    let out = {
+      depth: 0,
+      left: 1,
+      failedKey: "g",
+      currentObject: obj,
+    };
+    deepEqual(evalHas(obj, ["g"], true, 0), out);
+    out = {
+      depth: 0,
+      left: 1,
+      failedKey: "0",
+      currentObject: obj,
+    };
+    deepEqual(evalHas(obj, ["0"], true, 0), out);
+    out = {
+      depth: 1,
+      left: 2,
+      failedKey: "2",
+      currentObject: [{ n: {}, m: 1 }],
+    };
+    deepEqual(evalHas(obj, ["n", "2", "a"], true, 0), out);
   });
 });

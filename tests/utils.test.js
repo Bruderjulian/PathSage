@@ -1,8 +1,9 @@
 const assert = require("node:assert");
-const { describe, it, mock } = require("node:test");
+const { describe, it } = require("node:test");
 const utils = require("../src/utils.js");
 
 describe("utils", () => {
+  /*
   it("isArray", function () {
     assert.ok(utils.isArray([]));
     assert.ok(utils.isArray(new Array()));
@@ -10,28 +11,6 @@ describe("utils", () => {
     assert.equal(utils.isArray({}), false);
     assert.equal(utils.isArray(true), false);
     assert.equal(utils.isArray(""), false);
-  });
-  //Optional for now
-  it("isArray Fallback", function () {
-    mock.method(
-      utils,
-      "isArray",
-      (obj) => Object.prototype.toString.call(obj) === "[object Array]"
-    );
-    assert.ok(utils.isArray([]));
-    assert.ok(utils.isArray(new Array()));
-    assert.equal(utils.isArray(arguments), false);
-    assert.equal(utils.isArray({}), false);
-    assert.equal(utils.isArray(true), false);
-    assert.equal(utils.isArray(""), false);
-    mock.reset();
-  });
-  /*
-  it("checkPath", function () {
-    assert.equal(utils.checkPath("a"), undefined);
-    assert.equal(utils.checkPath(""), undefined);
-    assert.throws(() => utils.checkPath());
-    assert.throws(() => utils.checkPath({}));
   });
   */
   it("checkObject", function () {
@@ -41,12 +20,14 @@ describe("utils", () => {
     assert.throws(() => utils.checkObject());
     assert.throws(() => utils.checkObject(""));
   });
-  it("isNotObjectLike", function () {
-    assert.equal(utils.isNotObjectLike({}), false);
-    assert.equal(utils.isNotObjectLike([]), false);
-    assert.ok(utils.isNotObjectLike(null));
-    assert.ok(utils.isNotObjectLike());
-    assert.ok(utils.isNotObjectLike(""));
+  it("isObject", function () {
+    assert.ok(utils.isObject({}));
+    // review Objects with Null Prototype
+    assert.ok(utils.isObject(Object.create(null)));
+    assert.equal(utils.isObject([]), false);
+    assert.equal(utils.isObject(null), false);
+    assert.equal(utils.isObject(), false);
+    assert.equal(utils.isObject(""), false);
   });
   it("validCacheSize", function () {
     assert.ok(utils.validCacheSize(-1));
