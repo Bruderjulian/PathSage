@@ -88,6 +88,21 @@ export declare class unPathify {
   static getPaths(object: ObjectLike): string[];
 
   /**
+   * Creates a path in the Object or Array
+   * @param {ObjectLike} object - The object to create path in
+   * @throws {SyntaxError} - if the object is `undefined` or `null`
+   */
+  static create(object: ObjectLike): ObjectLike;
+
+  /**
+   * Checks if the path is valid. If an array of tokens is supplied, the type of all elements is checked.
+   * @param {String | String[]} path - path to validate.
+   * @throws {SyntaxError} - the path (as a string) is invalid due brackets or quotes
+   * @throws {TypeError} - the path has the wrong type or some elements of the tokens have the wrong type
+   */
+  static validate(path: String | String[]): void;
+
+  /**
    * Configures the cache, tokenizer and validator.
    * @param {object} [options]
    * @param {boolean} options.allowKeys - allows special keys (.constructor, .prototype, etc).
