@@ -10,7 +10,7 @@ export interface HasResult {
  * Library for working with nested objects with path notations
  * @name unPathify
  * @author BruderJulian <https://github.com/Bruderjulian>
- * @version 1.2
+ * @version 1.3
  */
 export declare class unPathify {
   /**
