@@ -13,16 +13,13 @@ function checkObject(obj) {
 }
 
 function checkTokens(tokens) {
-  if (!isArray(tokens)) throw new TypeError("Invalid Token Array");
-  for (let i = 0, len = path.length; i < len; i++) {
-    if (typeof path !== "string" || typeof path !== "number") {
-      throw new TypeError("Invalid Token Type");
-    }
+  for (let i = 0, len = tokens.length; i < len; i++) {
+    if (typeof tokens[i] !== "string") throw new TypeError("Invalid Token Type");
   }
 }
 
 function checkNotation(path) {
-  if (typeof path !== "string") throw new SyntaxError("Invalid Notation Type");
+  if (typeof path !== "string") throw new TypeError("Invalid Notation Type");
   if (path.length === 0) return;
   if (!checkBrackets(path)) {
     throw new SyntaxError("All brackets must be placed correctly");
