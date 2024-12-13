@@ -18,10 +18,10 @@ const {
   checkTokens,
 } = require("./src/utils");
 
-var cache = {};
-var allowKeys = false;
-var currentSize = 0;
-var cacheSize = -1;
+var _cache = {};
+var _allowKeys = false;
+var _currentSize = 0;
+var _cacheSize = -1;
 class unPathify {
   static setProperty(object, path, value) {
     checkObject(object);
@@ -70,8 +70,8 @@ class unPathify {
   }
 
   static clearCache() {
-    cache = {};
-    currentSize = 0;
+    _cache = {};
+    _currentSize = 0;
   }
 
   static configure(options = {}) {
@@ -79,33 +79,33 @@ class unPathify {
       throw new TypeError("Invalid Options Type");
     }
     if (typeof options.allowKeys === "boolean") {
-      allowKeys = options.allowKeys;
+      _allowKeys = options.allowKeys;
     }
     let size = parseInt(options.cacheSize, 10);
-    if (validCacheSize(size)) cacheSize = size;
+    if (validCacheSize(size)) _cacheSize = size;
   }
 }
 
 function tokenize(path) {
-  if (cache.hasOwnProperty(path)) {
-    return cache[path].slice(0) || [];
+  if (_cache.hasOwnProperty(path)) {
+    return _cache[path].slice(0) || [];
   }
   checkNotation(path);
-  var tokens = tokenizePath(path, allowKeys).reverse();
-  if (++currentSize > cacheSize && cacheSize !== -1) {
-    cache = {};
-    currentSize = 1;
+  var tokens = tokenizePath(path, _allowKeys).reverse();
+  if (++_currentSize > _cacheSize && _cacheSize !== -1) {
+    _cache = {};
+    _currentSize = 1;
   }
-  cache[path] = tokens;
+  _cache[path] = tokens;
   return tokens.slice(0);
 }
 
 function getPrivates() {
   return {
-    cache: cache,
-    cacheSize: cacheSize,
-    currentSize: currentSize,
-    allowKeys: allowKeys,
+    cache: _cache,
+    cacheSize: _cacheSize,
+    currentSize: _currentSize,
+    allowKeys: _allowKeys,
   };
 }
 
