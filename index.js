@@ -11,6 +11,7 @@ const {
 
 const {
   isObject,
+  isArray,
   validCacheSize,
   checkObject,
   checkNotation,
@@ -54,7 +55,7 @@ class unPathify {
   }
 
   static validate(path) {
-    if (Array.isArray(path)) checkTokens(path);
+    if (isArray(path)) checkTokens(path);
     else checkNotation(path);
   }
 
@@ -86,7 +87,7 @@ class unPathify {
 }
 
 function tokenize(path) {
-  if (Object.hasOwn(cache, path)) {
+  if (cache.hasOwnProperty(path)) {
     return cache[path].slice(0) || [];
   }
   checkNotation(path);

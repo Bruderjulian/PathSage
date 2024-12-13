@@ -1,7 +1,4 @@
-const isArray = Array.isArray;
-function isNotObjectLike(obj) {
-  return typeof obj !== "object" || obj === null;
-}
+const { hasOwn, isArray, isNotObjectLike, entries } = require("./utils");
 
 var func;
 const disallowedTokens = new Set([
@@ -56,10 +53,7 @@ function evalHas(obj, path, detailed, depth) {
   if (path.length === 0) return true;
   const key = path.pop();
   const prop = obj[key];
-  if (
-    (isNotObjectLike(prop) && path.length !== 0) ||
-    !Object.hasOwn(obj, key)
-  ) {
+  if ((isNotObjectLike(prop) && path.length !== 0) || !hasOwn.call(obj, key)) {
     return detailed
       ? {
           depth: depth,
@@ -75,7 +69,7 @@ function evalHas(obj, path, detailed, depth) {
 function evalCreate(obj, path) {
   if (path.length === 1) {
     const key = path[0];
-    if (!Object.hasOwn(obj, key)) obj[key] = {};
+    if (!hasOwn.call(obj, key)) obj[key] = {};
     return obj;
   }
   const key = path.pop();
@@ -121,7 +115,7 @@ function stringifyPath(tokens) {
 function deepKeysIterator(obj, path) {
   var result = [];
   var numbered = isArray(obj);
-  for (let [key, value] of Object.entries(obj)) {
+  for (let [key, value] of entries(obj)) {
     if (numbered) key = parseInt(key, 10);
     if (
       typeof value !== "object" ||

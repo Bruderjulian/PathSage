@@ -1,5 +1,19 @@
+function isNotObjectLike(obj) {
+  return typeof obj !== "object" || obj === null;
+}
+
 function isObject(obj) {
-  return typeof obj === "object" && !Array.isArray(obj) && obj !== null;
+  return typeof obj === "object" && !isArray(obj) && obj !== null;
+}
+
+function entriesPolyFill(obj) {
+  let keys = Object.keys(obj);
+  let key;
+  for (let i = 0, len = keys.length; i < len; i++) {
+    key = keys[i];
+    keys[i] = [key, obj[key]];
+  }
+  return keys;
 }
 
 //hardcoded limit at 256 for now
@@ -14,7 +28,8 @@ function checkObject(obj) {
 
 function checkTokens(tokens) {
   for (let i = 0, len = tokens.length; i < len; i++) {
-    if (typeof tokens[i] !== "string") throw new TypeError("Invalid Token Type");
+    if (typeof tokens[i] !== "string")
+      throw new TypeError("Invalid Token Type");
   }
 }
 
@@ -53,10 +68,18 @@ function checkQuotes(path) {
   return typeof quote === "undefined";
 }
 
+const hasOwn = Object.hasOwn || Object.prototype.hasOwnProperty;
+const entries = Object.entries || entriesPolyFill;
+const isArray = Array.isArray;
+
 module.exports = {
   isObject,
   validCacheSize,
   checkObject,
   checkNotation,
   checkTokens,
+  hasOwn,
+  isArray,
+  isNotObjectLike,
+  entries,
 };
