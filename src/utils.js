@@ -68,7 +68,7 @@ function checkQuotes(path) {
   return typeof quote === "undefined";
 }
 
-const hasOwn = Object.hasOwn || Object.prototype.hasOwnProperty;
+const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
 const entries = Object.entries || entriesPolyFill;
 const isArray = Array.isArray;
 
