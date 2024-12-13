@@ -1,6 +1,6 @@
 # UnPathify
 
-An advanced library for manipulating and accessing nested objects and arrays using path notation. With features like path tokenization, rudimentary caching and simple configuration, **UnPathify** makes working with nested data more efficient and easy-to-use.
+An advanced library for manipulating and accessing nested objects and arrays using path notation. With features like path tokenization, simple caching and configuration, **UnPathify** makes working with nested objects more performant and easy-to-use.
 
 ## Table of Contents
 
@@ -15,20 +15,15 @@ An advanced library for manipulating and accessing nested objects and arrays usi
 - [License](#license)
 - [Authors](#authors)
 
----
-
-## Introduction
-
-**UnPathify** provides a suite of static methods for handling deeply nested properties within objects and arrays. The library uses caching to enhance performance.
-
 ## Features
 
 - **Comprehensive API:** Set, get, modify, has, remove and create properties and validate and analyze Path Notations.
 - **Path Tokenization:** Efficiently tokenizes and caches paths for repeated use.
-- **Fast & Compact:** Being extremely fast and efficient ([Performance](#performance)) while being very small with only 1Kb ([Size](#size)).
+- **Fast & Compact:** Being extremely fast and efficient ([Performance](#performance)) while being very small with only 5.5Kb ([Size](#size)).
 - **Validation:** Validation of invalid inputs and paths.
 - **Configuration Options:** Limit cache size, allow Special keys and more. See [Configuration](#configuration).
 - **Types/Docs:** Integrated Types and JSDoc comments for better useability.
+- **No Dependencies:** No extra Dependencies are required!
 - **Testing:** Test for all components. (over 40 Tests with 100% coverage. See [Testing](#testing)).
 
 ## Installation
@@ -159,6 +154,8 @@ Enabling it could potentially open security issues!!
 ## Performance
 
 ## Size
+
+It is extremely small with only 5.5Kb(minified + gzipped) and 15.4Kb(minified)! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
 
 ## Contributing
 

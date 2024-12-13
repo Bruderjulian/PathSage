@@ -1,15 +1,15 @@
 {
   "name": "unpathify",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "An awesome Object-path notation library",
-  "main": "index.js",
+  "main": "./dist/index.min.js",
   "types": "./index.d.ts",
   "exports": "./dist/index.min.js",
   "scripts": {
     "test": "node --test"
   },
   "files": [
-    "dist/index.js",
+    "dist/index.min.js",
     "index.d.ts"
   ],
   "engines": {
