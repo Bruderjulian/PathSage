@@ -17,14 +17,15 @@ An advanced library for manipulating and accessing nested objects and arrays usi
 
 ## Features
 
-- **Comprehensive API:** Set, get, modify, has, remove and create properties and validate and analyze Path Notations.
+- **Comprehensive API:** Set, get, modify, has, remove and create properties and validate Path Notations.
 - **Path Tokenization:** Efficiently tokenizes and caches paths for repeated use.
-- **Fast & Compact:** Being extremely fast and efficient ([Performance](#performance)) while being very small with only 5.5Kb ([Size](#size)).
+- **Fast & Compact:** Being extremely performant and efficient ([Performance](#performance)) while being very small with only 5.7Kb ([Size](#size)).
 - **Validation:** Validation of invalid inputs and paths.
 - **Configuration Options:** Limit cache size, allow Special keys and more. See [Configuration](#configuration).
 - **Types/Docs:** Integrated Types and JSDoc comments for better useability.
 - **No Dependencies:** No extra Dependencies are required!
-- **Testing:** Tests for all components. (over 40 Tests with nearly 100% coverage. See [Testing](#testing)).
+- **Minimum Version:** Supports Node v6 out of the box!
+- **Testing:** Tests for all components. (over 46 Tests with nearly 100% coverage. See [Testing](#testing)).
 
 ## Installation
 
@@ -155,7 +156,7 @@ Enabling it could potentially open security issues!!
 
 ## Size
 
-It is extremely small with only 5.5Kb(minified + gzipped) and 15.4Kb(minified)! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
+It is extremely small with only 5.7Kb(minified + gzipped) and 15.7Kb(minified)! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
 
 ## Contributing
 
@@ -165,8 +166,8 @@ Let me know if you would like to refine or add features to something!
 
 ## Testing
 
-All components, functions or branches are being tested. However some branches like the polyfills can't really be tests.
-Overall it still exceeds 99% coverage in all stats (lines, branches, funcs)!
+All components, functions or branches are being tested.
+The Tests achieve a 99.8% coverage in all stats (lines, branches, funcs) by testing all components individually!
 
 To run tests, first clone repo and then run the following command:
 
