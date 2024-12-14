@@ -7,10 +7,10 @@ export interface HasResult {
 }
 
 /** Library for working with nested objects with path notations
- * @name unPathify
+ * @name PathSage
  * @author BruderJulian <https://github.com/Bruderjulian>
  * @version 1.4 */
-export declare class unPathify {
+export declare class PathSage {
   /**  Set a property at a given path to a given value.
    *  @param {ObjectLike} object - Object or array to set the value in
    *  @param {string} path - Path of the property, using the notation

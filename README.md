@@ -1,6 +1,6 @@
-# DotSage
+# PathSage
 
-An advanced library for manipulating and accessing nested objects and arrays using path notation. With features like path tokenization, simple caching and configuration, **DotSage** makes working with nested objects more performant and easy-to-use.
+An advanced library for manipulating and accessing nested objects and arrays using path notation. With features like path tokenization, simple caching and configuration, **PathSage** makes working with nested objects more performant and easy-to-use.
 
 ## Table of Contents
 
@@ -38,7 +38,7 @@ and import it!
 
 ```javascript
 //require
-const { DotSage } = require("dot-sage");
+const { PathSage } = require("dot-sage");
 ```
 
 ## Usage
@@ -69,7 +69,7 @@ Set the property at a given path to a given value.
 const obj = { user: { profile: { name: "Alice" } } };
 
 // Set a value
-DotSage.setProperty(obj, "user.profile.age", 30);
+PathSage.setProperty(obj, "user.profile.age", 30);
 ```
 
 ### getProperty(object: ObjectLike, path: String)
@@ -79,7 +79,7 @@ Get the value of the property in an Object at a given path.
 #### Example:
 
 ```javascript
-const age = DotSage.getProperty(obj, "user.profile.age");
+const age = PathSage.getProperty(obj, "user.profile.age");
 console.log(age); // Output: 30
 ```
 
@@ -90,7 +90,7 @@ Check whether a property exists in an Object at a given path.
 #### Example:
 
 ```javascript
-const exists = DotSage.hasProperty(obj, "user.profile.age");
+const exists = PathSage.hasProperty(obj, "user.profile.age");
 console.log(exists); // Output: true
 ```
 
@@ -103,8 +103,8 @@ Remove a property from an Object at a given path.
 #### Example:
 
 ```javascript
-DotSage.removeProperty(obj, "user.profile.age");
-console.log(DotSage.hasProperty(obj, "user.profile.age"));
+PathSage.removeProperty(obj, "user.profile.age");
+console.log(PathSage.hasProperty(obj, "user.profile.age"));
 // Output: false
 ```
 
@@ -117,10 +117,10 @@ Returns an array including every path. Non-empty objects or arrays are iterated 
 #### Example:
 
 ```javascript
-const paths1 = DotSage.keys(obj);
+const paths1 = PathSage.keys(obj);
 console.log(paths1); // Output: ['user.profile.name']
 
-const paths2 = DotSage.getPaths(obj);
+const paths2 = PathSage.getPaths(obj);
 console.log(paths2); // Output: ['user.profile.name']
 ```
 
@@ -131,7 +131,7 @@ Configures the cache, tokenizer and validator.
 #### Example:
 
 ```javascript
-DotSage.configure({
+PathSage.configure({
   allowKeys: true,
   cacheSize: 8,
 });

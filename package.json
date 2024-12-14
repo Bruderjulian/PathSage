@@ -17,11 +17,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Bruderjulian/Unpathify.git"
+    "url": "git+https://github.com/Bruderjulian/PathSage.git"
   },
-  "homepage": "https://github.com/Bruderjulian/Unpathify#readme",
+  "homepage": "https://github.com/Bruderjulian/PathSage#readme",
   "bugs": {
-    "url": "https://github.com/Bruderjulian/Unpathify/issues"
+    "url": "https://github.com/Bruderjulian/PathSage/issues"
   },
   "keywords": [
     "object",
@@ -33,7 +33,7 @@
     "object",
     "obj-path",
     "obj-prop",
-    "unpathify",
+    "path-sage",
     "pathify"
   ],
   "author": "BruderJulian",
