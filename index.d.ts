@@ -9,7 +9,7 @@ export interface HasResult {
 /** Library for working with nested objects with path notations
  * @name PathSage
  * @author BruderJulian <https://github.com/Bruderjulian>
- * @version 1.4 */
+ * @version 1.4.1 */
 export declare class PathSage {
   /**  Set a property at a given path to a given value.
    *  @param {ObjectLike} object - Object or array to set the value in

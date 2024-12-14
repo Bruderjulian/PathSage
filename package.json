@@ -1,6 +1,6 @@
 {
   "name": "path-sage",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "An awesome Object-path notation library",
   "main": "./dist/index.min.js",
   "types": "./index.d.ts",
@@ -34,6 +34,7 @@
     "obj-path",
     "obj-prop",
     "path-sage",
+    "PathSage",
     "pathify"
   ],
   "author": "BruderJulian",
