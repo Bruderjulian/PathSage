@@ -24,7 +24,7 @@ An advanced library for manipulating and accessing nested objects and arrays usi
 - **Configuration Options:** Limit cache size, allow Special keys and more. See [Configuration](#configuration).
 - **Types/Docs:** Integrated Types and JSDoc comments for better useability.
 - **No Dependencies:** No extra Dependencies are required!
-- **Testing:** Test for all components. (over 40 Tests with 100% coverage. See [Testing](#testing)).
+- **Testing:** Tests for all components. (over 40 Tests with nearly 100% coverage. See [Testing](#testing)).
 
 ## Installation
 
@@ -164,6 +164,9 @@ Contributions are alway welcome! Just open an issue or submit a request
 Let me know if you would like to refine or add features to something!
 
 ## Testing
+
+All components, functions or branches are being tested. However some branches like the polyfills can't really be tests.
+Overall it still exceeds 99% coverage in all stats (lines, branches, funcs)!
 
 To run tests, first clone repo and then run the following command:
 

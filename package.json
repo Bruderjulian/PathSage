@@ -6,7 +6,7 @@
   "types": "./index.d.ts",
   "exports": "./dist/index.min.js",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test --experimental-test-coverage"
   },
   "files": [
     "dist/index.min.js",
