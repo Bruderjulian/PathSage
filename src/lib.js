@@ -20,7 +20,7 @@ const setFn = function (data, obj, key) {
 const removeFn = function (data, obj, key) {
   if (isArray(obj)) {
     key = parseInt(key, 10);
-    if (isNaN(key)) throw "key is NaN";
+    if (isNaN(key)) throw new SyntaxError("key is NaN");
     obj.splice(key, 1);
   } else delete obj[key];
 }.bind(null, null);
