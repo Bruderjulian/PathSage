@@ -6,17 +6,6 @@ function isObject(obj) {
   return typeof obj === "object" && !isArray(obj) && obj !== null;
 }
 
-function entriesPolyFill(obj) {
-  let keys = Object.keys(obj);
-  let key;
-  for (let i = 0, len = keys.length; i < len; i++) {
-    key = keys[i];
-    keys[i] = [key, obj[key]];
-  }
-  return keys;
-}
-
-//hardcoded limit at 256 for now
 function validCacheSize(size) {
   return typeof size === "number" && !isNaN(size) && size >= -1;
 }
@@ -46,8 +35,8 @@ function checkNotation(path) {
 
 function checkBrackets(path) {
   let counter = 0;
-  let current;
-  for (let i = 0, len = path.length; i < len; i++) {
+  let current, i, len;
+  for (i = 0, len = path.length; i < len; i++) {
     current = path[i];
     if (current === "[") counter++;
     else if (current === "]") counter--;
@@ -56,9 +45,8 @@ function checkBrackets(path) {
 }
 
 function checkQuotes(path) {
-  let current;
-  let quote;
-  for (let i = 0, len = path.length; i < len; i++) {
+  let quote, i, len, current;
+  for (i = 0, len = path.length; i < len; i++) {
     current = path[i];
     if (current === "'" || current === '"' || current === "`") {
       if (!quote) quote = current;
@@ -68,9 +56,20 @@ function checkQuotes(path) {
   return typeof quote === "undefined";
 }
 
+function isArray2(a) {
+  return a && a.constructor === Array;
+}
+function entriesPolyFill(obj) {
+  let keys = Object.keys(obj);
+  let key, i, len;
+  for (i = 0, len = keys.length; i < len; i++) {
+    keys[i] = [(key = keys[i]), obj[key]];
+  }
+  return keys;
+}
 const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
 const entries = Object.entries || entriesPolyFill;
-const isArray = Array.isArray;
+const isArray = Array.isArray || isArray2;
 
 module.exports = {
   isObject,
