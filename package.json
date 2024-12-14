@@ -1,5 +1,5 @@
 {
-  "name": "unpathify",
+  "name": "path-sage",
   "version": "1.4.0",
   "description": "An awesome Object-path notation library",
   "main": "./dist/index.min.js",

@@ -22,7 +22,7 @@ var _cache = {};
 var _allowKeys = false;
 var _currentSize = 0;
 var _cacheSize = -1;
-class unPathify {
+class DotSage {
   static setProperty(object, path, value) {
     checkObject(object);
     evalSingle(setFn.bind(null, value), object, tokenize(path));
@@ -109,4 +109,4 @@ function getPrivates() {
   };
 }
 
-module.exports = { unPathify, getPrivates };
+module.exports = { DotSage, getPrivates };
