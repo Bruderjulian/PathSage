@@ -1,3 +1,11 @@
+function isNotObjectLike(obj) {
+  return typeof obj !== "object" || obj === null;
+}
+
+function isObject(obj) {
+  return typeof obj === "object" && !isArray(obj) && obj !== null;
+}
+
 function validCacheSize(size) {
   return typeof size === "number" && !isNaN(size) && size >= -1;
 }
@@ -27,8 +35,8 @@ function checkNotation(path) {
 
 function checkBrackets(path) {
   let counter = 0;
-  let current;
-  for (let i = 0, len = path.length; i < len; i++) {
+  let current, i, len;
+  for (i = 0, len = path.length; i < len; i++) {
     current = path[i];
     if (current === "[") counter++;
     else if (current === "]") counter--;
@@ -37,9 +45,8 @@ function checkBrackets(path) {
 }
 
 function checkQuotes(path) {
-  let current;
-  let quote;
-  for (let i = 0, len = path.length; i < len; i++) {
+  let quote, i, len, current;
+  for (i = 0, len = path.length; i < len; i++) {
     current = path[i];
     if (current === "'" || current === '"' || current === "`") {
       if (!quote) quote = current;
@@ -49,10 +56,20 @@ function checkQuotes(path) {
   return typeof quote === "undefined";
 }
 
-const isArray = Array.isArray;
-function isNotObjectLike(obj) {
-  return typeof obj !== "object" || obj === null;
+function isArray2(a) {
+  return a && a.constructor === Array;
 }
+function entriesPolyFill(obj) {
+  let keys = Object.keys(obj);
+  let key, i, len;
+  for (i = 0, len = keys.length; i < len; i++) {
+    keys[i] = [(key = keys[i]), obj[key]];
+  }
+  return keys;
+}
+const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
+const entries = Object.entries || entriesPolyFill;
+const isArray = Array.isArray || isArray2;
 
 var func;
 const disallowedTokens = new Set([
@@ -74,7 +91,7 @@ const setFn = function (data, obj, key) {
 const removeFn = function (data, obj, key) {
   if (isArray(obj)) {
     key = parseInt(key, 10);
-    if (isNaN(key)) throw "key is NaN";
+    if (isNaN(key)) throw new SyntaxError("key is NaN");
     obj.splice(key, 1);
   } else delete obj[key];
 }.bind(null, null);
@@ -107,10 +124,7 @@ function evalHas(obj, path, detailed, depth) {
   if (path.length === 0) return true;
   const key = path.pop();
   const prop = obj[key];
-  if (
-    (isNotObjectLike(prop) && path.length !== 0) ||
-    !Object.hasOwn(obj, key)
-  ) {
+  if ((isNotObjectLike(prop) && path.length !== 0) || !hasOwn(obj, key)) {
     return detailed
       ? {
           depth: depth,
@@ -126,7 +140,7 @@ function evalHas(obj, path, detailed, depth) {
 function evalCreate(obj, path) {
   if (path.length === 1) {
     const key = path[0];
-    if (!Object.hasOwn(obj, key)) obj[key] = {};
+    if (!hasOwn(obj, key)) obj[key] = {};
     return obj;
   }
   const key = path.pop();
@@ -172,7 +186,7 @@ function stringifyPath(tokens) {
 function deepKeysIterator(obj, path) {
   var result = [];
   var numbered = isArray(obj);
-  for (let [key, value] of Object.entries(obj)) {
+  for (let [key, value] of entries(obj)) {
     if (numbered) key = parseInt(key, 10);
     if (
       typeof value !== "object" ||
@@ -185,13 +199,12 @@ function deepKeysIterator(obj, path) {
   }
   return result;
 }
+
 var _cache = {};
 var _allowKeys = false;
 var _currentSize = 0;
 var _cacheSize = -1;
-
-class unPathify {
-
+class PathSage {
   static setProperty(object, path, value) {
     checkObject(object);
     evalSingle(setFn.bind(null, value), object, tokenize(path));
@@ -244,19 +257,19 @@ class unPathify {
   }
 
   static configure(options = {}) {
-    if (isNotObjectLike(options) || isArray(options)) {
+    if (!isObject(options)) {
       throw new TypeError("Invalid Options Type");
     }
-    if (typeof options._allowKeys === "boolean") {
-      _allowKeys = options._allowKeys;
+    if (typeof options.allowKeys === "boolean") {
+      _allowKeys = options.allowKeys;
     }
-    let size = parseInt(options._cacheSize, 10);
+    let size = parseInt(options.cacheSize, 10);
     if (validCacheSize(size)) _cacheSize = size;
   }
 }
 
 function tokenize(path) {
-  if (Object.hasOwn(_cache, path)) {
+  if (_cache.hasOwnProperty(path)) {
     return _cache[path].slice(0) || [];
   }
   checkNotation(path);
@@ -269,4 +282,13 @@ function tokenize(path) {
   return tokens.slice(0);
 }
 
-module.exports = unPathify;
+function getPrivates() {
+  return {
+    cache: _cache,
+    cacheSize: _cacheSize,
+    currentSize: _currentSize,
+    allowKeys: _allowKeys,
+  };
+}
+
+module.exports = { PathSage, getPrivates };
