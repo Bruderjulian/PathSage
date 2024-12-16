@@ -90,14 +90,16 @@ function tokenize(path) {
   if (_cache.hasOwnProperty(path)) {
     return _cache[path].slice(0) || [];
   }
-  checkNotation(path);
-  var tokens = tokenizePath(path, _allowKeys).reverse();
+  if (!isArray(path)) {
+    checkNotation(path);
+    path = tokenizePath(path, _allowKeys).reverse();
+  } else path = path.reverse();
   if (++_currentSize > _cacheSize && _cacheSize !== -1) {
     _cache = {};
     _currentSize = 1;
   }
-  _cache[path] = tokens;
-  return tokens.slice(0);
+  _cache[path] = path;
+  return path.slice(0);
 }
 
 function getPrivates() {
