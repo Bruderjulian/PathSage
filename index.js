@@ -1,12 +1,11 @@
 const {
   tokenizePath,
-  evalSingle,
   evalCreate,
   evalHas,
   deepKeysIterator,
-  setFn,
-  getFn,
-  removeFn,
+  evalSetProperty,
+  evalGetProperty,
+  evalRemoveProperty,
 } = require("./src/lib");
 
 const {
@@ -23,15 +22,16 @@ var _allowKeys = false;
 var _seperator = ".";
 var _currentSize = 0;
 var _cacheSize = -1;
+
 class PathSage {
   static setProperty(object, path, value) {
     checkObject(object);
-    evalSingle(setFn.bind(null, value), object, tokenize(path));
+    evalSetProperty(object, tokenize(path), value);
   }
 
   static getProperty(object, path) {
     checkObject(object);
-    return evalSingle(getFn, object, tokenize(path));
+    return evalGetProperty(getFn, object, tokenize(path));
   }
 
   static hasProperty(object, path, detailed = false) {
@@ -46,7 +46,7 @@ class PathSage {
 
   static deleteProperty(object, path) {
     checkObject(object);
-    evalSingle(removeFn, object, tokenize(path));
+    evalRemoveProperty(removeFn, object, tokenize(path));
   }
 
   static create(object, path) {
@@ -94,16 +94,13 @@ function tokenize(path) {
   if (_cache.hasOwnProperty(path)) {
     return _cache[path].slice(0) || [];
   }
-  if (!isArray(path)) {
-    checkNotation(path);
-    path = tokenizePath(path, _allowKeys).reverse();
-  } else path = path.reverse();
   if (++_currentSize > _cacheSize && _cacheSize !== -1) {
     _cache = {};
     _currentSize = 1;
   }
-  _cache[path] = path;
-  return path.slice(0);
+  if (isArray(path)) return (_cache[path] = path.reverse()).slice(0);
+  checkNotation(path);
+  return (_cache[path] = tokenizePath(path, _allowKeys).reverse()).slice(0);
 }
 
 function getPrivates() {
@@ -112,6 +109,7 @@ function getPrivates() {
     cacheSize: _cacheSize,
     currentSize: _currentSize,
     allowKeys: _allowKeys,
+    seperator: _seperator,
   };
 }
 

@@ -1,6 +1,5 @@
 const { hasOwn, isArray, isNotObjectLike, entries } = require("./utils");
 
-var func;
 const disallowedTokens = new Set([
   "this",
   "__proto__",
@@ -8,14 +7,6 @@ const disallowedTokens = new Set([
   "constructor",
 ]);
 const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
-
-const getFn = function (data, obj, key) {
-  return obj[key];
-}.bind(null, null);
-
-const setFn = function (data, obj, key) {
-  obj[key] = data;
-};
 
 const removeFn = function (data, obj, key) {
   if (isArray(obj)) {
@@ -40,13 +31,36 @@ function tokenizePath(path, allowKeys) {
   return res;
 }
 
-function evalProperty(obj, path) {
-  if (path.length === 1) return func(obj, path[0]);
-  const prop = obj[path.pop()];
-  if (isNotObjectLike(prop)) {
-    throw new EvalError("Could not fully evaluate the object path");
+function evalSetProperty(obj, path, value) {
+  for (let i = path.length; --i > 0; ) {
+    obj = obj[path[i]];
+    if (isNotObjectLike(obj)) {
+      throw new EvalError("Could not fully evaluate the object path");
+    }
   }
-  return evalProperty(prop, path);
+  obj[path[0]] = value;
+}
+
+function evalGetProperty(obj, path) {
+  for (let i = path.length; --i > 0; ) {
+    obj = obj[path[i]];
+    if (isNotObjectLike(obj)) return null;
+  }
+  return obj[path[0]];
+}
+
+function evalRemoveProperty(obj, path) {
+  for (let i = path.length; --i > 0; ) {
+    obj = obj[path[i]];
+    if (isNotObjectLike(obj)) {
+      throw new EvalError("Could not fully evaluate the object path");
+    }
+  }
+  if (isArray(obj)) {
+    const key = parseInt(path[0], 10);
+    if (isNaN(key)) throw new SyntaxError("key is not a Number");
+    obj.splice(key, 1);
+  } else delete obj[path[0]];
 }
 
 function evalHas(obj, path, detailed, depth) {
@@ -79,12 +93,6 @@ function evalCreate(obj, path) {
   }
   evalCreate(prop, path);
   return obj;
-}
-
-function evalSingle(fn, obj, pathArr) {
-  if (pathArr.length === 0) return obj;
-  func = fn;
-  return evalProperty(obj, pathArr);
 }
 
 function escapePath(token) {
@@ -131,11 +139,10 @@ function deepKeysIterator(obj, path) {
 
 module.exports = {
   tokenizePath,
-  evalSingle,
+  evalSetProperty,
+  evalGetProperty,
+  evalRemoveProperty,
   evalCreate,
   evalHas,
   deepKeysIterator,
-  setFn,
-  getFn,
-  removeFn,
 };
