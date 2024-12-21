@@ -20,6 +20,7 @@ const {
 
 var _cache = {};
 var _allowKeys = false;
+var _seperator = ".";
 var _currentSize = 0;
 var _cacheSize = -1;
 class PathSage {
@@ -49,7 +50,7 @@ class PathSage {
   }
 
   static create(object, path) {
-    if (object === undefined) return {};
+    if (object === undefined) object = {};
     checkObject(object);
     evalCreate(object, tokenize(path));
   }
@@ -80,6 +81,9 @@ class PathSage {
     }
     if (typeof options.allowKeys === "boolean") {
       _allowKeys = options.allowKeys;
+    }
+    if (typeof options.seperator === "string") {
+      _seperator = options.seperator;
     }
     let size = parseInt(options.cacheSize, 10);
     if (validCacheSize(size)) _cacheSize = size;
