@@ -1,35 +1,13 @@
 const { doesNotThrow, equal, ok, deepEqual, throws } = require("node:assert");
 const { describe, it } = require("node:test");
 const {
-  setFn,
-  getFn,
-  removeFn,
-  evalSingle,
   evalHas,
   evalCreate,
   deepKeysIterator,
+  evalGetProperty,
 } = require("../src/lib.js");
 
 describe("resolvers", () => {
-  it("Operator Exists", function () {
-    equal(typeof Function.bind, "function", "Binding is not available");
-    equal(typeof setFn, "function");
-    equal(typeof getFn, "function");
-    equal(typeof removeFn, "function");
-    ok(!setFn.toString().includes("native code"));
-    ok(getFn.toString().includes("native code"));
-    ok(removeFn.toString().includes("native code"));
-  });
-  it("Operator", function () {
-    let obj = { a: 1 };
-    equal(setFn.bind(null, 2)(obj, "b"), undefined);
-    deepEqual(obj, { a: 1, b: 2 });
-    equal(getFn(obj, "a"), 1);
-    equal(getFn(obj, "c"), undefined);
-    deepEqual(obj, { a: 1, b: 2 });
-    equal(removeFn(obj, "a"), undefined);
-    deepEqual(obj, { b: 2 });
-  });
   it("keys", function () {
     let obj = {
       a: [{ n: new Date(), "h. ['": 6, 'j"': 7 }],
@@ -50,22 +28,23 @@ describe("resolvers", () => {
     ];
     deepEqual(deepKeysIterator(obj, []), paths);
   });
-  it("evalSingle", function () {
+  it("evalGetProperty", function () {
     let obj = {
       a: [{ n: {}, m: 1 }],
       b: { c: [3, 4], b: 2 },
       c: [[], [[[{ v: { f: { e: 5 } } }]]]],
     };
     let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
-    deepEqual(evalSingle(getFn, obj, []), obj);
-    deepEqual(evalSingle(getFn, obj, ["b", "b"]), 2);
-    deepEqual(evalSingle(getFn, obj, ["c", "b"]), [3, 4]);
-    deepEqual(evalSingle(getFn, obj, ["n", "0", "a"]), {});
-    deepEqual(evalSingle(getFn, obj, tokens), 5);
-    doesNotThrow(() => evalSingle(getFn, obj, ["g"]));
-    doesNotThrow(() => evalSingle(getFn, obj, ["0"]));
-    doesNotThrow(() => evalSingle(getFn, obj, ["2", "a"]));
-    throws(() => evalSingle(getFn, obj, ["n", "2", "a"]));
+    deepEqual(evalGetProperty(obj, []), obj);
+    deepEqual(evalGetProperty(obj, ["b", "b"]), 2);
+    deepEqual(evalGetProperty(obj, ["c", "b"]), [3, 4]);
+    deepEqual(evalGetProperty(obj, ["n", "0", "a"]), {});
+    deepEqual(evalGetProperty(obj, tokens), 5);
+    deepEqual(evalGetProperty(obj, ["g"]), null);
+    deepEqual(evalGetProperty(obj, ["0"]), null);
+    deepEqual(evalGetProperty(obj, ["2", "a"]), null);
+    deepEqual(evalGetProperty(obj, ["n", "2", "a"]), null);
+
   });
   it("evalCreate", function () {
     let obj = {};
