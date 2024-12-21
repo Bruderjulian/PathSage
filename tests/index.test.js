@@ -9,6 +9,7 @@ describe("API Tests", function () {
       cacheSize: -1,
       currentSize: 0,
       allowKeys: false,
+      seperator: ".",
     };
     let state = getPrivates();
     deepEqual(state, defaults);
@@ -16,6 +17,7 @@ describe("API Tests", function () {
   it("must handle configurations", function () {
     doesNotThrow(() => PathSage.configure());
     throws(() => PathSage.configure(true));
+
     PathSage.configure({
       allowKeys: true,
       cacheSize: 32,
@@ -23,11 +25,13 @@ describe("API Tests", function () {
     let state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 32);
+    deepEqual(state.seperator, ".");
 
     PathSage.configure({ cacheSize: -2 });
     state = getPrivates();
     deepEqual(state.cacheSize, 32);
     deepEqual(state.allowKeys, true);
+    deepEqual(state.seperator, ".");
 
     PathSage.configure({
       allowKeys: false,
@@ -36,6 +40,7 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, false);
     deepEqual(state.cacheSize, 16);
+    deepEqual(state.seperator, ".");
 
     PathSage.configure({
       allowKeys: true,
@@ -43,6 +48,15 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 16);
+    deepEqual(state.seperator, ".");
+
+    PathSage.configure({
+      seperator: "/",
+    });
+    state = getPrivates();
+    deepEqual(state.allowKeys, true);
+    deepEqual(state.cacheSize, 16);
+    deepEqual(state.seperator, "/");
 
     PathSage.configure({
       cacheSize: 2.3,
@@ -50,6 +64,7 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 2);
+    deepEqual(state.seperator, "/");
   });
 
   it("clear Cache", function () {
@@ -81,57 +96,72 @@ describe("API Tests", function () {
     throws(() => PathSage.setProperty(1, ""));
     throws(() => PathSage.setProperty(undefined, ""));
     throws(() => PathSage.setProperty({}, {}));
-    throws(() => PathSage.setProperty({}, []));
+    doesNotThrow(() => PathSage.setProperty({}, []));
     throws(() => PathSage.setProperty({}, 1));
     throws(() => PathSage.setProperty({}, undefined));
     throws(() => PathSage.setProperty(undefined, undefined));
+    doesNotThrow(() => PathSage.setProperty({}, []));
+    doesNotThrow(() => PathSage.setProperty({}, ""));
 
     throws(() => PathSage.getProperty(1, ""));
     throws(() => PathSage.getProperty(undefined, ""));
     throws(() => PathSage.getProperty({}, {}));
-    throws(() => PathSage.getProperty({}, []));
+    doesNotThrow(() => PathSage.getProperty({}, []));
     throws(() => PathSage.getProperty({}, 1));
     throws(() => PathSage.getProperty({}, undefined));
     throws(() => PathSage.getProperty(undefined, undefined));
+    doesNotThrow(() => PathSage.getProperty({}, []));
+    doesNotThrow(() => PathSage.getProperty({}, ""));
 
     throws(() => PathSage.hasProperty(1, ""));
     throws(() => PathSage.hasProperty(undefined, ""));
     throws(() => PathSage.hasProperty({}, {}));
-    throws(() => PathSage.hasProperty({}, []));
+    doesNotThrow(() => PathSage.hasProperty({}, []));
     throws(() => PathSage.hasProperty({}, 1));
     throws(() => PathSage.hasProperty({}, undefined));
     throws(() => PathSage.hasProperty(undefined, undefined));
+    doesNotThrow(() => PathSage.hasProperty({}, []));
+    doesNotThrow(() => PathSage.hasProperty({}, ""));
 
     throws(() => PathSage.removeProperty(1, ""));
     throws(() => PathSage.removeProperty(undefined, ""));
     throws(() => PathSage.removeProperty({}, {}));
-    throws(() => PathSage.removeProperty({}, []));
+    doesNotThrow(() => PathSage.removeProperty({}, []));
     throws(() => PathSage.removeProperty({}, 1));
     throws(() => PathSage.removeProperty({}, undefined));
     throws(() => PathSage.removeProperty(undefined, undefined));
+    doesNotThrow(() => PathSage.removeProperty({}, []));
+    doesNotThrow(() => PathSage.removeProperty({}, ""));
 
     throws(() => PathSage.deleteProperty(1, ""));
     throws(() => PathSage.deleteProperty(undefined, ""));
     throws(() => PathSage.deleteProperty({}, {}));
-    throws(() => PathSage.deleteProperty({}, []));
+    doesNotThrow(() => PathSage.deleteProperty({}, []));
     throws(() => PathSage.deleteProperty({}, 1));
     throws(() => PathSage.deleteProperty({}, undefined));
     throws(() => PathSage.deleteProperty(undefined, undefined));
+    doesNotThrow(() => PathSage.deleteProperty({}, []));
+    doesNotThrow(() => PathSage.deleteProperty({}, ""));
 
     throws(() => PathSage.create(1, ""));
     throws(() => PathSage.create({}, {}));
-    throws(() => PathSage.create({}, []));
     throws(() => PathSage.create({}, 1));
-    throws(() => PathSage.create({}, undefined));
+    doesNotThrow(() => PathSage.create({}, []));
+    doesNotThrow(() => PathSage.create({}, ""));
+    doesNotThrow(() => PathSage.create({}, undefined));
     doesNotThrow(() => PathSage.create(undefined, undefined));
     doesNotThrow(() => PathSage.create(undefined, ""));
 
     throws(() => PathSage.keys(""));
     throws(() => PathSage.keys(true));
     throws(() => PathSage.keys(undefined));
+    doesNotThrow(() => PathSage.keys({}));
+    doesNotThrow(() => PathSage.keys([]));
     throws(() => PathSage.getPaths(""));
     throws(() => PathSage.getPaths(true));
     throws(() => PathSage.getPaths(undefined));
+    doesNotThrow(() => PathSage.getPaths({}));
+    doesNotThrow(() => PathSage.getPaths([]));
 
     throws(() => PathSage.validate(true));
     throws(() => PathSage.validate(undefined));
