@@ -52,7 +52,7 @@ class PathSage {
   static create(object, path) {
     if (object === undefined) object = {};
     checkObject(object);
-    if (path.length === 0 || path === undefined) return object;
+    if (path === undefined || path.length === 0) return object;
     evalCreate(object, tokenize(path));
   }
 

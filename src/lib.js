@@ -8,14 +8,6 @@ const disallowedTokens = new Set([
 ]);
 const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
 
-const removeFn = function (data, obj, key) {
-  if (isArray(obj)) {
-    key = parseInt(key, 10);
-    if (isNaN(key)) throw new SyntaxError("key is NaN");
-    obj.splice(key, 1);
-  } else delete obj[key];
-}.bind(null, null);
-
 function tokenizePath(path, allowKeys) {
   const res = [],
     reg = /\[\s*(\d+)(?=\s*])|\[\s*(["'`])((?:\\.|(?!\2).)*)\2\s*]|[\w$]+/g;
