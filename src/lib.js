@@ -32,6 +32,7 @@ function tokenizePath(path, allowKeys) {
 }
 
 function evalSetProperty(obj, path, value) {
+  if (path.length === 0) return;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
     if (isNotObjectLike(obj)) {
@@ -42,6 +43,7 @@ function evalSetProperty(obj, path, value) {
 }
 
 function evalGetProperty(obj, path) {
+  if (path.length === 0) return obj;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
     if (isNotObjectLike(obj)) return null;
@@ -50,6 +52,7 @@ function evalGetProperty(obj, path) {
 }
 
 function evalRemoveProperty(obj, path) {
+  if (path.length === 0) return {};
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
     if (isNotObjectLike(obj)) {
