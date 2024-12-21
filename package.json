@@ -38,8 +38,5 @@
     "pathify"
   ],
   "author": "BruderJulian",
-  "license": "MIT",
-  "devDependencies": {
-    "bench-node": "^0.4.1"
-  }
+  "license": "MIT"
 }
