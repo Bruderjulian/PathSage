@@ -31,7 +31,7 @@ class PathSage {
 
   static getProperty(object, path) {
     checkObject(object);
-    return evalGetProperty(getFn, object, tokenize(path));
+    return evalGetProperty(object, tokenize(path));
   }
 
   static hasProperty(object, path, detailed = false) {
@@ -41,17 +41,18 @@ class PathSage {
 
   static removeProperty(object, path) {
     checkObject(object);
-    evalSingle(removeFn, object, tokenize(path));
+    evalRemoveProperty(object, tokenize(path));
   }
 
   static deleteProperty(object, path) {
     checkObject(object);
-    evalRemoveProperty(removeFn, object, tokenize(path));
+    evalRemoveProperty(object, tokenize(path));
   }
 
   static create(object, path) {
     if (object === undefined) object = {};
     checkObject(object);
+    if (path.length === 0 || path === undefined) return object;
     evalCreate(object, tokenize(path));
   }
 
