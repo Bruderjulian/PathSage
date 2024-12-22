@@ -38,7 +38,9 @@ function evalGetProperty(obj, path) {
   if (path.length === 0) return obj;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
-    if (isNotObjectLike(obj)) return null;
+    if (isNotObjectLike(obj)) {
+      throw new EvalError("Could not fully evaluate the object path");
+    }
   }
   return obj[path[0]];
 }
