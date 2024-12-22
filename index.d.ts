@@ -10,6 +10,7 @@ export interface ConfigOptions {
   separator: string;
   cacheSize: number;
 }
+
 /** Library for working with nested objects with path notations
  * @name PathSage
  * @author BruderJulian <https://github.com/Bruderjulian>
