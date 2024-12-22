@@ -58,21 +58,23 @@ function evalRemoveProperty(obj, path) {
   } else delete obj[path[0]];
 }
 
-function evalHas(obj, path, detailed, depth) {
+function evalHas(obj, path, detailed) {
   if (path.length === 0) return true;
-  const key = path.pop();
-  const prop = obj[key];
-  if ((isNotObjectLike(prop) && path.length !== 0) || !hasOwn(obj, key)) {
-    return detailed
-      ? {
-          depth: depth,
-          left: ++path.length,
-          failedKey: key,
-          currentObject: obj,
-        }
-      : false;
+  for (let i = path.length, key; i-- > 0; ) {
+    obj = obj[(key = path[i])];
+    if ((!isNotObjectLike(obj) && i !== 0) || typeof obj !== "undefined") {
+      continue;
+    }
+    // prettier-ignore
+    if (detailed) return {
+      depth: path.length - i,
+      left: i,
+      failedKey: key,
+      currentObject: obj,
+    };
+    else return false;
   }
-  return evalHas(prop, path, detailed, ++depth);
+  return true;
 }
 
 function evalCreate(obj, path) {
