@@ -49,10 +49,8 @@ class PathSage {
     evalRemoveProperty(object, tokenize(path));
   }
 
-  static create(object, path) {
-    if (object === undefined) object = {};
+  static create(object = {}, path = "") {
     checkObject(object);
-    if (path === undefined || path.length === 0) return object;
     evalCreate(object, tokenize(path));
   }
 

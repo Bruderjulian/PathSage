@@ -78,6 +78,7 @@ function evalHas(obj, path, detailed) {
 }
 
 function evalCreate(obj, path) {
+  if (path.length === 0) return obj;
   for (let i = path.length, key; --i > 0; ) {
     key = path[i];
     if (isNotObjectLike(obj[key])) obj[key] = {};
