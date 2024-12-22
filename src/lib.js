@@ -78,14 +78,12 @@ function evalHas(obj, path, detailed) {
 }
 
 function evalCreate(obj, path) {
-  let key;
-  for (let i = path.length; --i > 0; ) {
+  for (let i = path.length, key; --i > 0; ) {
     key = path[i];
-    if (isNotObjectLike(obj[key])) obj[key] = obj = {};
-    else obj = obj[key];
+    if (isNotObjectLike(obj[key])) obj[key] = {};
+    obj = obj[key];
   }
-  key = path[0];
-  if (!hasOwn(obj, key)) obj[key] = {};
+  if (!hasOwn(obj, (key = path[0]))) obj[key] = {};
 }
 
 function escapePath(token) {
