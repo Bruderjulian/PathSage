@@ -13,8 +13,7 @@ const {
   isArray,
   validCacheSize,
   checkObject,
-  checkNotation,
-  checkTokens,
+  checkNotation
 } = require("./src/utils");
 
 var _cache = {};
@@ -52,11 +51,6 @@ class PathSage {
   static create(object = {}, path = "") {
     checkObject(object);
     evalCreate(object, tokenize(path));
-  }
-
-  static validate(path) {
-    if (isArray(path)) checkTokens(path);
-    else checkNotation(path);
   }
 
   static keys(object) {

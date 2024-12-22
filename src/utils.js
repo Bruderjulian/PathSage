@@ -15,13 +15,6 @@ function checkObject(obj) {
     throw new SyntaxError("Invalid Object Type");
 }
 
-function checkTokens(tokens) {
-  for (let i = 0, len = tokens.length; i < len; i++) {
-    if (typeof tokens[i] !== "string")
-      throw new TypeError("Invalid Token Type");
-  }
-}
-
 function checkNotation(path) {
   if (typeof path !== "string") throw new TypeError("Invalid Notation Type");
   if (path.length === 0) return;
@@ -61,8 +54,8 @@ function isArray2(a) {
 }
 function entriesPolyFill(obj) {
   let keys = Object.keys(obj);
-  let key, i, len;
-  for (i = 0, len = keys.length; i < len; i++) {
+  let key, i;
+  for (i = keys.length; i-- > 0; ) {
     keys[i] = [(key = keys[i]), obj[key]];
   }
   return keys;
@@ -76,7 +69,6 @@ module.exports = {
   validCacheSize,
   checkObject,
   checkNotation,
-  checkTokens,
   hasOwn,
   isArray,
   isNotObjectLike,
