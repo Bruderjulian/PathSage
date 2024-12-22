@@ -13,12 +13,12 @@ const {
   isArray,
   validCacheSize,
   checkObject,
-  checkNotation
+  checkNotation,
 } = require("./src/utils");
 
 var _cache = {};
 var _allowKeys = false;
-var _seperator = ".";
+var _separator = ".";
 var _currentSize = 0;
 var _cacheSize = -1;
 
@@ -75,8 +75,8 @@ class PathSage {
     if (typeof options.allowKeys === "boolean") {
       _allowKeys = options.allowKeys;
     }
-    if (typeof options.seperator === "string") {
-      _seperator = options.seperator;
+    if (typeof options.separator === "string") {
+      _separator = options.separator;
     }
     let size = parseInt(options.cacheSize, 10);
     if (validCacheSize(size)) _cacheSize = size;
@@ -102,7 +102,7 @@ function getPrivates() {
     cacheSize: _cacheSize,
     currentSize: _currentSize,
     allowKeys: _allowKeys,
-    seperator: _seperator,
+    separator: _separator,
   };
 }
 
