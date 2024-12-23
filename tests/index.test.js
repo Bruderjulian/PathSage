@@ -258,6 +258,16 @@ describe("API Tests", function () {
     testCache2();
   });
 
+  it("create", function () {
+    clearCache();
+    let obj = {};
+    PathSage.create(obj, "a[0]");
+    deepEqual(obj, { a: { 0: {} } });
+    testCache();
+    PathSage.create(obj, "a.c");
+    deepEqual(obj, { a: { 0: {}, c: {} } });
+  });
+
   //Tokenizer (private)
   it("tokenizer", function () {
     let obj = { a: [1, 2], b: 4 };
