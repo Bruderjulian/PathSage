@@ -175,6 +175,7 @@ describe("resolvers", () => {
       b: { b: 2 },
       c: [[], [[[{ v: {} }]]]],
     });
+    throws(() => evalRemoveProperty(obj, ["j", "h"]));
     evalRemoveProperty(obj, []);
     deepEqual(obj, {});
   });
