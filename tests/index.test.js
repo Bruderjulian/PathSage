@@ -9,7 +9,7 @@ describe("API Tests", function () {
       cacheSize: -1,
       currentSize: 0,
       allowKeys: false,
-      seperator: ".",
+      separator: ".",
     };
     let state = getPrivates();
     deepEqual(state, defaults);
@@ -25,13 +25,13 @@ describe("API Tests", function () {
     let state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 32);
-    deepEqual(state.seperator, ".");
+    deepEqual(state.separator, ".");
 
     PathSage.configure({ cacheSize: -2 });
     state = getPrivates();
     deepEqual(state.cacheSize, 32);
     deepEqual(state.allowKeys, true);
-    deepEqual(state.seperator, ".");
+    deepEqual(state.separator, ".");
 
     PathSage.configure({
       allowKeys: false,
@@ -40,7 +40,7 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, false);
     deepEqual(state.cacheSize, 16);
-    deepEqual(state.seperator, ".");
+    deepEqual(state.separator, ".");
 
     PathSage.configure({
       allowKeys: true,
@@ -48,15 +48,15 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 16);
-    deepEqual(state.seperator, ".");
+    deepEqual(state.separator, ".");
 
     PathSage.configure({
-      seperator: "/",
+      separator: "/",
     });
     state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 16);
-    deepEqual(state.seperator, "/");
+    deepEqual(state.separator, "/");
 
     PathSage.configure({
       cacheSize: 2.3,
@@ -64,7 +64,7 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 2);
-    deepEqual(state.seperator, "/");
+    deepEqual(state.separator, "/");
   });
 
   it("clear Cache", function () {
@@ -162,12 +162,6 @@ describe("API Tests", function () {
     throws(() => PathSage.getPaths(undefined));
     doesNotThrow(() => PathSage.getPaths({}));
     doesNotThrow(() => PathSage.getPaths([]));
-
-    throws(() => PathSage.validate(true));
-    throws(() => PathSage.validate(undefined));
-    throws(() => PathSage.validate({}));
-    doesNotThrow(() => PathSage.validate([]));
-    doesNotThrow(() => PathSage.validate(""));
   });
 
   it("evaluate Keys", function () {
@@ -182,28 +176,6 @@ describe("API Tests", function () {
     deepEqual(out, ["0", "1"]);
     deepEqual(out2, ["0", "1"]);
     deepEqual(out, out2);
-  });
-
-  it("validate Tokens", function () {
-    doesNotThrow(() => PathSage.validate([]));
-    doesNotThrow(() => PathSage.validate(["a"]));
-    doesNotThrow(() => PathSage.validate(["a", "1"]));
-    throws(() => PathSage.validate([1]));
-    throws(() => PathSage.validate([true]));
-    throws(() => PathSage.validate([[]]));
-    throws(() => PathSage.validate([{}]));
-    throws(() => PathSage.validate(["1", 1]));
-  });
-
-  it("validate String", function () {
-    doesNotThrow(() => PathSage.validate(""));
-    doesNotThrow(() => PathSage.validate("[]"));
-    doesNotThrow(() => PathSage.validate("a.1"));
-    doesNotThrow(() => PathSage.validate("a.[1]"));
-    throws(() => PathSage.validate("[[]}"));
-    throws(() => PathSage.validate("{{}]"));
-    throws(() => PathSage.validate("'''"));
-    throws(() => PathSage.validate("```"));
   });
 
   it("setProperty", function () {

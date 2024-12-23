@@ -40,11 +40,10 @@ describe("resolvers", () => {
     deepEqual(evalGetProperty(obj, ["c", "b"]), [3, 4]);
     deepEqual(evalGetProperty(obj, ["n", "0", "a"]), {});
     deepEqual(evalGetProperty(obj, tokens), 5);
-    deepEqual(evalGetProperty(obj, ["g"]), null);
-    deepEqual(evalGetProperty(obj, ["0"]), null);
-    deepEqual(evalGetProperty(obj, ["2", "a"]), null);
-    deepEqual(evalGetProperty(obj, ["n", "2", "a"]), null);
-
+    deepEqual(evalGetProperty(obj, ["g"]), undefined);
+    deepEqual(evalGetProperty(obj, ["0"]), undefined);
+    deepEqual(evalGetProperty(obj, ["2", "a"]), undefined);
+    throws(() => evalGetProperty(obj, ["n", "2", "a"]));
   });
   it("evalCreate", function () {
     let obj = {};
@@ -54,9 +53,13 @@ describe("resolvers", () => {
       //c: [[], [[[{ v: { f: { e: 5 } } }]]]],
       c: { 1: { 0: { 0: { 0: { v: { f: { e: {} } } } } } } },
     };
-    deepEqual(evalCreate({ a: 1 }, ["a"]), { a: 1 });
-    deepEqual(evalCreate(obj, ["n", "2", "a"]), { a: { 2: { n: {} } } });
-    deepEqual(evalCreate(obj, tokens), obj2);
+    let obj1 = { a: 1 };
+    evalCreate(obj1, ["a"]);
+    deepEqual(obj1, { a: 1 });
+    evalCreate(obj, ["n", "2", "a"]);
+    deepEqual(obj, { a: { 2: { n: {} } } });
+    evalCreate(obj, tokens);
+    deepEqual(obj, obj2);
   });
   it("evalHas", function () {
     let obj = {
@@ -83,30 +86,30 @@ describe("resolvers", () => {
       c: [[], [[[{ v: { f: { e: 5 } } }]]]],
     };
     let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
-    equal(evalHas(obj, [], true, 0), true);
-    equal(evalHas(obj, ["b", "b"], true, 0), true);
-    equal(evalHas(obj, ["0", "b"], true, 0), true);
-    equal(evalHas(obj, tokens, true, 0), true);
+    equal(evalHas(obj, [], true), true);
+    equal(evalHas(obj, ["b", "b"], true), true);
+    equal(evalHas(obj, ["0", "b"], true), true);
+    equal(evalHas(obj, tokens, true), true);
     let out = {
       depth: 0,
       left: 1,
       failedKey: "g",
       currentObject: obj,
     };
-    deepEqual(evalHas(obj, ["g"], true, 0), out);
+    deepEqual(evalHas(obj, ["g"], true), out);
     out = {
       depth: 0,
       left: 1,
       failedKey: "0",
       currentObject: obj,
     };
-    deepEqual(evalHas(obj, ["0"], true, 0), out);
+    deepEqual(evalHas(obj, ["0"], true), out);
     out = {
       depth: 1,
       left: 2,
       failedKey: "2",
       currentObject: [{ n: {}, m: 1 }],
     };
-    deepEqual(evalHas(obj, ["n", "2", "a"], true, 0), out);
+    deepEqual(evalHas(obj, ["n", "2", "a"], true), out);
   });
 });
