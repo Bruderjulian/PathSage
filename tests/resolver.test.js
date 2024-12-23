@@ -6,6 +6,7 @@ const {
   deepKeysIterator,
   evalGetProperty,
   evalSetProperty,
+  evalRemoveProperty,
 } = require("../src/lib.js");
 
 describe("resolvers", () => {
@@ -58,7 +59,7 @@ describe("resolvers", () => {
     });
     evalSetProperty(obj, ["2", "a"], 5);
     deepEqual(obj, {
-      a: [{ n: { h: 1 }, m: 1 }, ,5],
+      a: [{ n: { h: 1 }, m: 1 }, , 5],
       b: { c: [1, 4], b: 1 },
       c: [[], [[[{ v: { f: { e: "abc" } } }]]]],
       g: 3,
@@ -68,6 +69,7 @@ describe("resolvers", () => {
     throws(() => evalSetProperty(obj, ["n", "999", "a"], 1));
     throws(() => evalSetProperty(obj, ["k", "g", "b"], 1));
   });
+
   it("evalGetProperty", function () {
     let obj = {
       a: [{ n: {}, m: 1 }],
@@ -85,6 +87,7 @@ describe("resolvers", () => {
     deepEqual(evalGetProperty(obj, ["2", "a"]), undefined);
     throws(() => evalGetProperty(obj, ["n", "2", "a"]));
   });
+
   it("evalHas", function () {
     let obj = {
       a: [{ n: {}, m: 1 }],
@@ -102,7 +105,6 @@ describe("resolvers", () => {
     equal(evalHas(obj, ["2", "a"]), false);
     equal(evalHas(obj, ["n", "2", "a"]), false);
   });
-
   it("evalHas Detailed", function () {
     let obj = {
       a: [{ n: {}, m: 1 }],
@@ -136,6 +138,47 @@ describe("resolvers", () => {
     };
     deepEqual(evalHas(obj, ["n", "2", "a"], true), out);
   });
+
+  it("evalRemove", function () {
+    let obj = {
+      a: [{ n: {}, m: 1 }],
+      b: { c: [3, 4], b: 2 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    };
+    let tokens = ["f", "v", "0", "0", "0", "1", "c"];
+    evalRemoveProperty(obj, tokens);
+    deepEqual(obj, {
+      a: [{ n: {}, m: 1 }],
+      b: { c: [3, 4], b: 2 },
+      c: [[], [[[{ v: {} }]]]],
+    });
+    evalRemoveProperty(obj, ["1", "c", "b"]);
+    deepEqual(obj, {
+      a: [{ n: {}, m: 1 }],
+      b: { c: [3], b: 2 },
+      c: [[], [[[{ v: {} }]]]],
+    });
+    evalRemoveProperty(obj, ["c", "b"]);
+    deepEqual(obj, {
+      a: [{ n: {}, m: 1 }],
+      b: { b: 2 },
+      c: [[], [[[{ v: {} }]]]],
+    });
+    evalRemoveProperty(obj, ["n", "0", "a"]);
+    deepEqual(obj, {
+      a: [{ m: 1 }],
+      b: { b: 2 },
+      c: [[], [[[{ v: {} }]]]],
+    });
+    evalRemoveProperty(obj, ["a"]);
+    deepEqual(obj, {
+      b: { b: 2 },
+      c: [[], [[[{ v: {} }]]]],
+    });
+    evalRemoveProperty(obj, []);
+    deepEqual(obj, {});
+  });
+
   it("evalCreate", function () {
     let obj = {};
     let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
@@ -152,6 +195,7 @@ describe("resolvers", () => {
     evalCreate(obj, tokens);
     deepEqual(obj, obj2);
   });
+
   it("keys", function () {
     let obj = {
       a: [{ n: new Date(), "h. ['": 6, 'j"': 7 }],
