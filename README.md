@@ -190,8 +190,9 @@ Let me know if you would like to refine or add features to something!
 
 ## Testing
 
-All components, functions or branches are being tested.
-The Tests achieve a 99.8% coverage in all stats (lines, branches, functions) by testing all components individually!
+All components, functions or branches are being tested with over 45 Tests and 415 Assertions!
+The Tests achieve a near 100% coverage in all stats (lines, branches, functions)!
+I couldn't test some error-catching branches (only 2) because I haven't found a case where these branches are being executed.
 
 To run tests, first clone repo and then run the following command:
 

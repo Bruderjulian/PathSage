@@ -1,4 +1,4 @@
-const { doesNotThrow, equal, ok, deepEqual, throws } = require("node:assert");
+const { equal, deepEqual, throws } = require("node:assert");
 const { describe, it } = require("node:test");
 const {
   evalHas,
