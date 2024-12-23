@@ -5,9 +5,69 @@ const {
   evalCreate,
   deepKeysIterator,
   evalGetProperty,
+  evalSetProperty,
 } = require("../src/lib.js");
 
 describe("resolvers", () => {
+  it("evalSetProperty", function () {
+    let obj = {
+      a: [{ n: {}, m: 1 }],
+      b: { c: [3, 4], b: 2 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    };
+    let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
+    evalSetProperty(obj, []);
+    evalSetProperty(obj, ["b", "b"], 1);
+    deepEqual(obj, {
+      a: [{ n: {}, m: 1 }],
+      b: { c: [3, 4], b: 1 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    });
+    evalSetProperty(obj, ["0", "c", "b"], 1);
+    deepEqual(obj, {
+      a: [{ n: {}, m: 1 }],
+      b: { c: [1, 4], b: 1 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    });
+    evalSetProperty(obj, ["n", "0", "a"], { h: 1 });
+    deepEqual(obj, {
+      a: [{ n: { h: 1 }, m: 1 }],
+      b: { c: [1, 4], b: 1 },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    });
+    evalSetProperty(obj, tokens, "abc");
+    deepEqual(obj, {
+      a: [{ n: { h: 1 }, m: 1 }],
+      b: { c: [1, 4], b: 1 },
+      c: [[], [[[{ v: { f: { e: "abc" } } }]]]],
+    });
+    evalSetProperty(obj, ["g"], "3");
+    deepEqual(obj, {
+      a: [{ n: { h: 1 }, m: 1 }],
+      b: { c: [1, 4], b: 1 },
+      c: [[], [[[{ v: { f: { e: "abc" } } }]]]],
+      g: 3,
+    });
+    evalSetProperty(obj, ["0"], 4);
+    deepEqual(obj, {
+      a: [{ n: { h: 1 }, m: 1 }],
+      b: { c: [1, 4], b: 1 },
+      c: [[], [[[{ v: { f: { e: "abc" } } }]]]],
+      g: 3,
+      0: 4,
+    });
+    evalSetProperty(obj, ["2", "a"], 5);
+    deepEqual(obj, {
+      a: [{ n: { h: 1 }, m: 1 }, ,5],
+      b: { c: [1, 4], b: 1 },
+      c: [[], [[[{ v: { f: { e: "abc" } } }]]]],
+      g: 3,
+      0: 4,
+    });
+    throws(() => evalSetProperty(obj, ["n", "2", "a"], 1));
+    throws(() => evalSetProperty(obj, ["n", "999", "a"], 1));
+    throws(() => evalSetProperty(obj, ["k", "g", "b"], 1));
+  });
   it("evalGetProperty", function () {
     let obj = {
       a: [{ n: {}, m: 1 }],
