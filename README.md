@@ -1,6 +1,8 @@
 # PathSage
 
-An advanced library for manipulating and accessing nested objects and arrays using path notation. With features like path tokenization, simple caching and configuration, **PathSage** makes working with nested objects more performant and easy-to-use.
+An advanced library for manipulating and accessing nested objects and arrays using path notation.
+With features like path tokenization, simple caching and configuration,
+**PathSage** makes working with nested objects more performant and easy-to-use.
 
 ## Table of Contents
 
@@ -17,29 +19,29 @@ An advanced library for manipulating and accessing nested objects and arrays usi
 
 ## Features
 
-- **Comprehensive API:** Set, get, modify, has, remove and create properties and validate Path Notations.
+- **Comprehensive API:** Set, get, modify, has, remove and create methods are available.
 - **Path Tokenization:** Efficiently tokenizes and caches paths for repeated use.
 - **Fast & Compact:** Being extremely performant and efficient ([Performance](#performance)) while being very small with only 5.7Kb ([Size](#size)).
-- **Validation:** Validation of invalid inputs and paths.
 - **Configuration Options:** Limit cache size, allow Special keys and more. See [Configuration](#configuration).
-- **Types/Docs:** Integrated Types and JSDoc comments for better useability.
 - **No Dependencies:** No extra Dependencies are required!
 - **Minimum Version:** Supports Node v6 out of the box!
+- **Types/Docs:** Integrated Types and JSDoc comments for better useability.
 - **Testing:** Tests for all components. (over 46 Tests with nearly 100% coverage. See [Testing](#testing)).
+- **Validation:** Validation of invalid inputs and paths.
 
 ## Installation
 
-Install the library via [npm](https://www.npmjs.com):
+Install [the library](https://www.npmjs.com/package/path-sage) with [npm](https://www.npmjs.com):
 
 ```bash
-npm install dot-sage
+npm install path-sage
 ```
 
 and import it!
 
 ```javascript
 //require
-const { PathSage } = require("dot-sage");
+const { PathSage } = require("path-sage");
 ```
 
 ## Usage
@@ -47,16 +49,17 @@ const { PathSage } = require("dot-sage");
 The library exposes the following static methods:
 
 - **setProperty()**: Sets a value at the specified path.
-- **getProperty()**: Retrieves the value from the specified path.
+- **getProperty()**: Retrieves a value from the specified path.
 - **hasProperty()**: Checks if a property exists at the given path.
 - **removeProperty() / deleteProperty()**: Removes a property from the specified path.
+- **create**: Creates a path in an object.
 - **keys() / getPaths()**: Lists all paths within an object.
-- **clearCache()**: Clears the entire cache.
 - **configure()**: Configures settings.
+- **clearCache()**: Clears the entire cache.
 
-Most methods accept an Object-Like argument, which means it could be a plain `Object`, an `Array` or a `Class`. It can't also be `Null` or `undefined`.
+All methods accept an Object-Like argument, which means it could be a plain `Object`, an `Array` or a `Class`. It can't be `null` or `undefined`.
 
-If any special keys or the function Syntax is used you need to enable it (See [Configuration](#configuration))!
+If any special keys or the function syntax is used, you can to enable/disable it (See [Configuration](#configuration))!
 
 ---
 
@@ -67,15 +70,16 @@ Set the property at a given path to a given value.
 #### Example:
 
 ```javascript
-const obj = { user: { profile: { name: "Alice" } } };
+var obj = { user: { profile: { name: "Alice" } } };
 
 // Set a value
 PathSage.setProperty(obj, "user.profile.age", 30);
+console.log(obj); // Output: { user: { profile: { name: "Alice", age: 30 } } };
 ```
 
 ### getProperty(object: ObjectLike, path: String)
 
-Get the value of the property in an Object at a given path.
+Get the value of the property in an object at a given path.
 
 #### Example:
 
@@ -84,22 +88,29 @@ const age = PathSage.getProperty(obj, "user.profile.age");
 console.log(age); // Output: 30
 ```
 
-### hasProperty(object: ObjectLike, path: String)
+### hasProperty(object: ObjectLike, path: String, ?detailed: boolean)
 
-Check whether a property exists in an Object at a given path.
+Check whether a property exists in an object at a given path.
+If detailed report is enabled, it will return a ´HasResult´ Object, when a key doesn't exist.
+
+#### HasResult
 
 #### Example:
 
 ```javascript
 const exists = PathSage.hasProperty(obj, "user.profile.age");
 console.log(exists); // Output: true
+
+// Detailed
+const exists = PathSage.hasProperty(obj, "user.profile.age", true);
+console.log(exists); // Output: {...}
 ```
 
 ### removeProperty(object: ObjectLike, path: String)
 
-Remove a property from an Object at a given path.
+Remove a property at a given path.
 
-#### Aliases: deleteProperty()
+#### Alias: deleteProperty()
 
 #### Example:
 
@@ -109,11 +120,11 @@ console.log(PathSage.hasProperty(obj, "user.profile.age"));
 // Output: false
 ```
 
-### keys(object: ObjectLike) / getPaths(object: ObjectLike)
+### keys(object: ObjectLike)
 
-Returns an array including every path. Non-empty objects or arrays are iterated and not included themselves.
+Returns an array including every available path. Non-empty objects and arrays are iterated and not included themselves.
 
-#### Aliases: getPaths()
+#### Alias: getPaths()
 
 #### Example:
 
@@ -123,6 +134,16 @@ console.log(paths1); // Output: ['user.profile.name']
 
 const paths2 = PathSage.getPaths(obj);
 console.log(paths2); // Output: ['user.profile.name']
+```
+
+### clearCache()
+
+clears the entire cache.
+
+#### Example:
+
+```javascript
+PathSage.clearCache();
 ```
 
 ### configure(options?: Object)
@@ -145,12 +166,15 @@ List of all available Options:
 | Name      | Description            | Type    | Default       |
 | --------- | ---------------------- | ------- | ------------- |
 | allowKeys | allows special keys    | boolean | false         |
+| separator | sets the separator     | string  | "."           |
 | cacheSize | the maximum cache size | number  | -1 (disabled) |
 
 **AllowKeys:** Allow these special keys `constructor`, `prototype`, `this` and `__proto__`.
 Enabling it could potentially open security issues!!
 <br>
-**CacheSize:** Limits the cache size by clearing it. Use -1 to disable the limit.
+**Separator:** Sets the Separator to a custom String. Default is "."
+<br>
+**CacheSize:** Limits the cache size by clearing it when needed. Use -1 to disable the limit.
 
 ## Performance
 
@@ -167,7 +191,7 @@ Let me know if you would like to refine or add features to something!
 ## Testing
 
 All components, functions or branches are being tested.
-The Tests achieve a 99.8% coverage in all stats (lines, branches, funcs) by testing all components individually!
+The Tests achieve a 99.8% coverage in all stats (lines, branches, functions) by testing all components individually!
 
 To run tests, first clone repo and then run the following command:
 
