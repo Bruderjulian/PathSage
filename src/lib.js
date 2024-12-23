@@ -62,15 +62,16 @@ function evalRemoveProperty(obj, path) {
 
 function evalHas(obj, path, detailed) {
   if (path.length === 0) return true;
-  for (let i = path.length, key; i-- > 0; ) {
-    obj = obj[(key = path[i])];
-    if ((!isNotObjectLike(obj) && i !== 0) || typeof obj !== "undefined") {
+  for (let i = path.length, key, prop; i-- > 0; ) {
+    prop = obj[(key = path[i])];
+    if ((!isNotObjectLike(prop) && i !== 0) || typeof prop !== "undefined") {
+      obj = prop;
       continue;
     }
     // prettier-ignore
     if (detailed) return {
-      depth: path.length - i,
-      left: i,
+      depth: path.length - i - 1,
+      left: ++i,
       failedKey: key,
       currentObject: obj,
     };
