@@ -46,7 +46,10 @@ function evalGetProperty(obj, path) {
 }
 
 function evalRemoveProperty(obj, path) {
-  if (path.length === 0) return {};
+  if (path.length === 0) {
+    for (const key of Object.keys(obj)) delete obj[key];
+    return;
+  }
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
     if (isNotObjectLike(obj)) {
