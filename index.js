@@ -35,7 +35,7 @@ class PathSage {
 
   static hasProperty(object, path, detailed = false) {
     checkObject(object);
-    return evalHas(object, tokenize(path), detailed, 0);
+    return evalHas(object, tokenize(path), detailed);
   }
 
   static removeProperty(object, path) {
