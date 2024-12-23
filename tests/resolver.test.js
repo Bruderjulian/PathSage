@@ -8,26 +8,6 @@ const {
 } = require("../src/lib.js");
 
 describe("resolvers", () => {
-  it("keys", function () {
-    let obj = {
-      a: [{ n: new Date(), "h. ['": 6, 'j"': 7 }],
-      b: { c: [3, 4], b: null },
-      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
-    };
-    obj.a[0][`k'"`] = 8;
-    let paths = [
-      "a[0].n",
-      `a[0].["h. ['"]`,
-      `a[0].['j"']`,
-      `a[0].['k'"']`,
-      "b.c[0]",
-      "b.c[1]",
-      "b.b",
-      "c[0]",
-      "c[1][0][0][0].v.f.e",
-    ];
-    deepEqual(deepKeysIterator(obj, []), paths);
-  });
   it("evalGetProperty", function () {
     let obj = {
       a: [{ n: {}, m: 1 }],
@@ -44,22 +24,6 @@ describe("resolvers", () => {
     deepEqual(evalGetProperty(obj, ["0"]), undefined);
     deepEqual(evalGetProperty(obj, ["2", "a"]), undefined);
     throws(() => evalGetProperty(obj, ["n", "2", "a"]));
-  });
-  it("evalCreate", function () {
-    let obj = {};
-    let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
-    let obj2 = {
-      a: { 2: { n: {} } },
-      //c: [[], [[[{ v: { f: { e: 5 } } }]]]],
-      c: { 1: { 0: { 0: { 0: { v: { f: { e: {} } } } } } } },
-    };
-    let obj1 = { a: 1 };
-    evalCreate(obj1, ["a"]);
-    deepEqual(obj1, { a: 1 });
-    evalCreate(obj, ["n", "2", "a"]);
-    deepEqual(obj, { a: { 2: { n: {} } } });
-    evalCreate(obj, tokens);
-    deepEqual(obj, obj2);
   });
   it("evalHas", function () {
     let obj = {
@@ -111,5 +75,41 @@ describe("resolvers", () => {
       currentObject: [{ n: {}, m: 1 }],
     };
     deepEqual(evalHas(obj, ["n", "2", "a"], true), out);
+  });
+  it("evalCreate", function () {
+    let obj = {};
+    let tokens = ["e", "f", "v", "0", "0", "0", "1", "c"];
+    let obj2 = {
+      a: { 2: { n: {} } },
+      //c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+      c: { 1: { 0: { 0: { 0: { v: { f: { e: {} } } } } } } },
+    };
+    let obj1 = { a: 1 };
+    evalCreate(obj1, ["a"]);
+    deepEqual(obj1, { a: 1 });
+    evalCreate(obj, ["n", "2", "a"]);
+    deepEqual(obj, { a: { 2: { n: {} } } });
+    evalCreate(obj, tokens);
+    deepEqual(obj, obj2);
+  });
+  it("keys", function () {
+    let obj = {
+      a: [{ n: new Date(), "h. ['": 6, 'j"': 7 }],
+      b: { c: [3, 4], b: null },
+      c: [[], [[[{ v: { f: { e: 5 } } }]]]],
+    };
+    obj.a[0][`k'"`] = 8;
+    let paths = [
+      "a[0].n",
+      `a[0].["h. ['"]`,
+      `a[0].['j"']`,
+      `a[0].['k'"']`,
+      "b.c[0]",
+      "b.c[1]",
+      "b.b",
+      "c[0]",
+      "c[1][0][0][0].v.f.e",
+    ];
+    deepEqual(deepKeysIterator(obj, []), paths);
   });
 });
