@@ -7,7 +7,6 @@ export interface HasResult {
 }
 export interface ConfigOptions {
   allowKeys: boolean;
-  separator: string;
   cacheSize: number;
 }
 
@@ -80,7 +79,6 @@ export declare class PathSage {
   /** Configures the cache, tokenizer and validator.
    * @param {object} [options]
    * @param {boolean} options.allowKeys - allows special keys (.constructor, .prototype, etc).
-   * @param {string} options.separator - sets the separator (default to ´.´).
    * @param {number} options.cacheSize - defines the cache size (if equal to -1, the cache won't be cleared)
    */
   static configure(options?: ConfigOptions): void;

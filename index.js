@@ -18,7 +18,6 @@ const {
 
 var _cache = {};
 var _allowKeys = false;
-var _separator = ".";
 var _currentSize = 0;
 var _cacheSize = -1;
 
@@ -75,9 +74,6 @@ class PathSage {
     if (typeof options.allowKeys === "boolean") {
       _allowKeys = options.allowKeys;
     }
-    if (typeof options.separator === "string") {
-      _separator = options.separator;
-    }
     let size = parseInt(options.cacheSize, 10);
     if (validCacheSize(size)) _cacheSize = size;
   }
@@ -101,8 +97,7 @@ function getPrivates() {
     cache: _cache,
     cacheSize: _cacheSize,
     currentSize: _currentSize,
-    allowKeys: _allowKeys,
-    separator: _separator,
+    allowKeys: _allowKeys
   };
 }
 

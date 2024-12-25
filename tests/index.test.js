@@ -9,7 +9,6 @@ describe("API Tests", function () {
       cacheSize: -1,
       currentSize: 0,
       allowKeys: false,
-      separator: ".",
     };
     let state = getPrivates();
     deepEqual(state, defaults);
@@ -25,13 +24,11 @@ describe("API Tests", function () {
     let state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 32);
-    deepEqual(state.separator, ".");
 
     PathSage.configure({ cacheSize: -2 });
     state = getPrivates();
     deepEqual(state.cacheSize, 32);
     deepEqual(state.allowKeys, true);
-    deepEqual(state.separator, ".");
 
     PathSage.configure({
       allowKeys: false,
@@ -40,7 +37,6 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, false);
     deepEqual(state.cacheSize, 16);
-    deepEqual(state.separator, ".");
 
     PathSage.configure({
       allowKeys: true,
@@ -48,15 +44,6 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 16);
-    deepEqual(state.separator, ".");
-
-    PathSage.configure({
-      separator: "/",
-    });
-    state = getPrivates();
-    deepEqual(state.allowKeys, true);
-    deepEqual(state.cacheSize, 16);
-    deepEqual(state.separator, "/");
 
     PathSage.configure({
       cacheSize: 2.3,
@@ -64,7 +51,6 @@ describe("API Tests", function () {
     state = getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 2);
-    deepEqual(state.separator, "/");
   });
 
   it("clear Cache", function () {

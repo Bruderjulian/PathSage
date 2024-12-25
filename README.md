@@ -166,13 +166,10 @@ List of all available Options:
 | Name      | Description            | Type    | Default       |
 | --------- | ---------------------- | ------- | ------------- |
 | allowKeys | allows special keys    | boolean | false         |
-| separator | sets the separator     | string  | "."           |
 | cacheSize | the maximum cache size | number  | -1 (disabled) |
 
 **AllowKeys:** Allow these special keys `constructor`, `prototype`, `this` and `__proto__`.
 Enabling it could potentially open security issues!!
-<br>
-**Separator:** Sets the Separator to a custom String. Default is "."
 <br>
 **CacheSize:** Limits the cache size by clearing it when needed. Use -1 to disable the limit.
 
