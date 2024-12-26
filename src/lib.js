@@ -1,4 +1,4 @@
-const { hasOwn, isArray, isNotObjectLike, entries } = require("./utils");
+const { hasOwn, isArray, isNotObjectLike } = require("./utils");
 
 const disallowedTokens = new Set([
   "this",
@@ -100,39 +100,25 @@ function escapePath(token) {
   return token;
 }
 
-function stringifyPath(tokens) {
-  let result = "";
-  let token;
-  let len = tokens.length;
-  let i = 0;
-  if (len === 1 || !isArray(tokens)) return escapePath(tokens[0]);
-  for (; i < len; i++) {
-    token = tokens[i];
-    if (typeof token === "number") {
-      result += `[${token}]`;
-    } else {
-      token = escapePath(token);
-      result += i === 0 ? token : `.${token}`;
-    }
+function keysIterator(obj, currentPath) {
+  let keys = Object.keys(obj);
+  if (keys.length === 0) return currentPath ? [currentPath] : [];
+  const paths = [];
+  let key, value, newPath;
+  for (key of keys) {
+    value = obj[key];
+    key = escapePath(key);
+    newPath =
+      currentPath !== ""
+        ? Array.isArray(obj)
+          ? `${currentPath}[${key}]`
+          : `${currentPath}.${key}`
+        : key;
+    if (typeof value === "object" && value !== null) {
+      paths.push(...keysIterator(value, newPath));
+    } else paths.push(newPath);
   }
-  return result;
-}
-
-function deepKeysIterator(obj, path) {
-  var result = [];
-  var numbered = isArray(obj);
-  for (let [key, value] of entries(obj)) {
-    if (numbered) key = parseInt(key, 10);
-    if (
-      typeof value !== "object" ||
-      value === null ||
-      Object.keys(value).length === 0
-    ) {
-      if (path.length > 0) result.push(stringifyPath([...path, key]));
-      else result.push(stringifyPath([key]));
-    } else result.push(...deepKeysIterator(value, [...path, key]));
-  }
-  return result;
+  return paths;
 }
 
 module.exports = {
@@ -142,5 +128,5 @@ module.exports = {
   evalRemoveProperty,
   evalCreate,
   evalHas,
-  deepKeysIterator,
+  keysIterator,
 };

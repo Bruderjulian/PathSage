@@ -2,7 +2,7 @@ const {
   tokenizePath,
   evalCreate,
   evalHas,
-  deepKeysIterator,
+  keysIterator,
   evalSetProperty,
   evalGetProperty,
   evalRemoveProperty,
@@ -54,12 +54,12 @@ class PathSage {
 
   static keys(object) {
     checkObject(object);
-    return deepKeysIterator(object, []);
+    return keysIterator(object, "");
   }
 
   static getPaths(object) {
     checkObject(object);
-    return deepKeysIterator(object, []);
+    return keysIterator(object, "");
   }
 
   static clearCache() {

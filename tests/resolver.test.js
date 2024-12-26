@@ -3,7 +3,7 @@ const { describe, it } = require("node:test");
 const {
   evalHas,
   evalCreate,
-  deepKeysIterator,
+  keysIterator,
   evalGetProperty,
   evalSetProperty,
   evalRemoveProperty,
@@ -215,6 +215,6 @@ describe("resolvers", () => {
       "c[0]",
       "c[1][0][0][0].v.f.e",
     ];
-    deepEqual(deepKeysIterator(obj, []), paths);
+    deepEqual(keysIterator(obj, ""), paths);
   });
 });
