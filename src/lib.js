@@ -93,13 +93,7 @@ function evalCreate(obj, path) {
   if (!hasOwn(obj, (key = path[0]))) obj[key] = {};
 }
 
-function escapePath(token) {
-  if (/\.|\[|\]|\"|\'|\s/.test(token)) {
-    return token.includes('"') ? `['${token}']` : `["${token}"]`;
-  }
-  return token;
-}
-
+const escapeReg = /\.|\[|\]|\"|\'|\s/;
 function keysIterator(obj, currentPath) {
   let keys = Object.keys(obj);
   if (keys.length === 0) return currentPath ? [currentPath] : [];
@@ -107,13 +101,16 @@ function keysIterator(obj, currentPath) {
   let key, value, newPath;
   for (key of keys) {
     value = obj[key];
-    key = escapePath(key);
     newPath =
-      currentPath !== ""
-        ? Array.isArray(obj)
-          ? `${currentPath}[${key}]`
-          : `${currentPath}.${key}`
-        : key;
+      currentPath === ""
+        ? key
+        : escapeReg.test(key)
+        ? key.includes("'")
+          ? `${currentPath}.["${key}"]`
+          : `${currentPath}.['${key}']`
+        : Array.isArray(obj)
+        ? `${currentPath}[${key}]`
+        : `${currentPath}.${key}`;
     if (typeof value === "object" && value !== null) {
       paths.push(...keysIterator(value, newPath));
     } else paths.push(newPath);
