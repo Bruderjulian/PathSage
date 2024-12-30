@@ -1,3 +1,21 @@
+var _cache = {};
+var _allowKeys = false;
+var _currentSize = 0;
+var _cacheSize = -1;
+
+const disallowedTokens = new Set([
+  "this",
+  "__proto__",
+  "prototype",
+  "constructor",
+]);
+const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
+const escapeReg = /\.|\[|\]|\"|\'|\s/;
+
+const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
+const entries = Object.entries || entriesPolyFill;
+const isArray = Array.isArray || isArray2;
+
 function isNotObjectLike(obj) {
   return typeof obj !== "object" || obj === null;
 }
@@ -13,13 +31,6 @@ function validCacheSize(size) {
 function checkObject(obj) {
   if (typeof obj !== "object" || obj === null)
     throw new SyntaxError("Invalid Object Type");
-}
-
-function checkTokens(tokens) {
-  for (let i = 0, len = tokens.length; i < len; i++) {
-    if (typeof tokens[i] !== "string")
-      throw new TypeError("Invalid Token Type");
-  }
 }
 
 function checkNotation(path) {
@@ -61,40 +72,12 @@ function isArray2(a) {
 }
 function entriesPolyFill(obj) {
   let keys = Object.keys(obj);
-  let key, i, len;
-  for (i = 0, len = keys.length; i < len; i++) {
+  let key, i;
+  for (i = keys.length; i-- > 0; ) {
     keys[i] = [(key = keys[i]), obj[key]];
   }
   return keys;
 }
-const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
-const entries = Object.entries || entriesPolyFill;
-const isArray = Array.isArray || isArray2;
-
-var func;
-const disallowedTokens = new Set([
-  "this",
-  "__proto__",
-  "prototype",
-  "constructor",
-]);
-const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
-
-const getFn = function (data, obj, key) {
-  return obj[key];
-}.bind(null, null);
-
-const setFn = function (data, obj, key) {
-  obj[key] = data;
-};
-
-const removeFn = function (data, obj, key) {
-  if (isArray(obj)) {
-    key = parseInt(key, 10);
-    if (isNaN(key)) throw new SyntaxError("key is NaN");
-    obj.splice(key, 1);
-  } else delete obj[key];
-}.bind(null, null);
 
 function tokenizePath(path, allowKeys) {
   const res = [],
@@ -111,144 +94,139 @@ function tokenizePath(path, allowKeys) {
   return res;
 }
 
-function evalProperty(obj, path) {
-  if (path.length === 1) return func(obj, path[0]);
-  const prop = obj[path.pop()];
-  if (isNotObjectLike(prop)) {
-    throw new EvalError("Could not fully evaluate the object path");
+function evalSetProperty(obj, path, value) {
+  if (path.length === 0) return;
+  for (let i = path.length; --i > 0; ) {
+    obj = obj[path[i]];
+    if (isNotObjectLike(obj)) {
+      throw new EvalError("Could not fully evaluate the object path");
+    }
   }
-  return evalProperty(prop, path);
+  obj[path[0]] = value;
 }
 
-function evalHas(obj, path, detailed, depth) {
-  if (path.length === 0) return true;
-  const key = path.pop();
-  const prop = obj[key];
-  if ((isNotObjectLike(prop) && path.length !== 0) || !hasOwn(obj, key)) {
-    return detailed
-      ? {
-          depth: depth,
-          left: ++path.length,
-          failedKey: key,
-          currentObject: obj,
-        }
-      : false;
+function evalGetProperty(obj, path) {
+  if (path.length === 0) return obj;
+  for (let i = path.length; --i > 0; ) {
+    obj = obj[path[i]];
+    if (isNotObjectLike(obj)) {
+      throw new EvalError("Could not fully evaluate the object path");
+    }
   }
-  return evalHas(prop, path, detailed, ++depth);
+  return obj[path[0]];
+}
+
+function evalRemoveProperty(obj, path) {
+  if (path.length === 0) {
+    for (const key of Object.keys(obj)) delete obj[key];
+    return;
+  }
+  for (let i = path.length; --i > 0; ) {
+    obj = obj[path[i]];
+    if (isNotObjectLike(obj)) {
+      throw new EvalError("Could not fully evaluate the object path");
+    }
+  }
+  if (isArray(obj)) {
+    const key = parseInt(path[0], 10);
+    if (isNaN(key)) throw new SyntaxError("key is not a Number");
+    obj.splice(key, 1);
+  } else delete obj[path[0]];
+}
+
+function evalHas(obj, path, detailed) {
+  if (path.length === 0) return true;
+  for (let i = path.length, key, prop; i-- > 0; ) {
+    prop = obj[(key = path[i])];
+    if ((!isNotObjectLike(prop) && i !== 0) || typeof prop !== "undefined") {
+      obj = prop;
+      continue;
+    }
+    // prettier-ignore
+    if (detailed) return {
+      depth: path.length - i - 1,
+      left: ++i,
+      failedKey: key,
+      currentObject: obj,
+    };
+    else return false;
+  }
+  return true;
 }
 
 function evalCreate(obj, path) {
-  if (path.length === 1) {
-    const key = path[0];
-    if (!hasOwn(obj, key)) obj[key] = {};
-    return obj;
+  if (path.length === 0) return obj;
+  for (let i = path.length, key; --i > 0; ) {
+    key = path[i];
+    if (isNotObjectLike(obj[key])) obj[key] = {};
+    obj = obj[key];
   }
-  const key = path.pop();
-  let prop = obj[key];
-  if (isNotObjectLike(prop, key)) {
-    obj[key] = prop = {};
-  }
-  evalCreate(prop, path);
-  return obj;
+  if (!hasOwn(obj, (path = path[0]))) obj[path] = {};
 }
 
-function evalSingle(fn, obj, pathArr) {
-  if (pathArr.length === 0) return obj;
-  func = fn;
-  return evalProperty(obj, pathArr);
-}
-
-function escapePath(token) {
-  if (/\.|\[|\]|\"|\'|\s/.test(token)) {
-    return token.includes('"') ? `['${token}']` : `["${token}"]`;
+function keysIterator(obj, currentPath) {
+  let keys = Object.keys(obj);
+  if (keys.length === 0) return currentPath ? [currentPath] : [];
+  const paths = [];
+  let key, value, newPath;
+  for (key of keys) {
+    value = obj[key];
+    newPath =
+      currentPath === ""
+        ? key
+        : escapeReg.test(key)
+        ? key.includes("'")
+          ? `${currentPath}.["${key}"]`
+          : `${currentPath}.['${key}']`
+        : Array.isArray(obj)
+        ? `${currentPath}[${key}]`
+        : `${currentPath}.${key}`;
+    if (typeof value === "object" && value !== null) {
+      paths.push(...keysIterator(value, newPath));
+    } else paths.push(newPath);
   }
-  return token;
+  return paths;
 }
 
-function stringifyPath(tokens) {
-  let result = "";
-  let token;
-  let len = tokens.length;
-  let i = 0;
-  if (len === 1 || !isArray(tokens)) return escapePath(tokens[0]);
-  for (; i < len; i++) {
-    token = tokens[i];
-    if (typeof token === "number") {
-      result += `[${token}]`;
-    } else {
-      token = escapePath(token);
-      result += i === 0 ? token : `.${token}`;
-    }
-  }
-  return result;
-}
-
-function deepKeysIterator(obj, path) {
-  var result = [];
-  var numbered = isArray(obj);
-  for (let [key, value] of entries(obj)) {
-    if (numbered) key = parseInt(key, 10);
-    if (
-      typeof value !== "object" ||
-      value === null ||
-      Object.keys(value).length === 0
-    ) {
-      if (path.length > 0) result.push(stringifyPath([...path, key]));
-      else result.push(stringifyPath([key]));
-    } else result.push(...deepKeysIterator(value, [...path, key]));
-  }
-  return result;
-}
-
-var _cache = {};
-var _allowKeys = false;
-var _currentSize = 0;
-var _cacheSize = -1;
 class PathSage {
   static setProperty(object, path, value) {
     checkObject(object);
-    evalSingle(setFn.bind(null, value), object, tokenize(path));
+    evalSetProperty(object, tokenize(path), value);
   }
 
   static getProperty(object, path) {
     checkObject(object);
-    return evalSingle(getFn, object, tokenize(path));
+    return evalGetProperty(object, tokenize(path));
   }
 
   static hasProperty(object, path, detailed = false) {
     checkObject(object);
-    return evalHas(object, tokenize(path), detailed, 0);
+    return evalHas(object, tokenize(path), detailed);
   }
 
   static removeProperty(object, path) {
     checkObject(object);
-    evalSingle(removeFn, object, tokenize(path));
+    evalRemoveProperty(object, tokenize(path));
   }
 
   static deleteProperty(object, path) {
     checkObject(object);
-    evalSingle(removeFn, object, tokenize(path));
+    evalRemoveProperty(object, tokenize(path));
   }
 
-  static create(object, path) {
-    if (object === undefined) return {};
+  static create(object = {}, path = "") {
     checkObject(object);
     evalCreate(object, tokenize(path));
   }
 
-  static validate(path) {
-    if (isArray(path)) checkTokens(path);
-    else checkNotation(path);
-  }
-
   static keys(object) {
     checkObject(object);
-    return deepKeysIterator(object, []);
+    return keysIterator(object, "");
   }
 
   static getPaths(object) {
     checkObject(object);
-    return deepKeysIterator(object, []);
+    return keysIterator(object, "");
   }
 
   static clearCache() {
@@ -272,14 +250,13 @@ function tokenize(path) {
   if (_cache.hasOwnProperty(path)) {
     return _cache[path].slice(0) || [];
   }
-  checkNotation(path);
-  var tokens = tokenizePath(path, _allowKeys).reverse();
   if (++_currentSize > _cacheSize && _cacheSize !== -1) {
     _cache = {};
     _currentSize = 1;
   }
-  _cache[path] = tokens;
-  return tokens.slice(0);
+  if (isArray(path)) return (_cache[path] = path.reverse()).slice(0);
+  checkNotation(path);
+  return (_cache[path] = tokenizePath(path, _allowKeys).reverse()).slice(0);
 }
 
 function getPrivates() {

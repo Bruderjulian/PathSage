@@ -7,6 +7,7 @@ const disallowedTokens = new Set([
   "constructor",
 ]);
 const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
+const escapeReg = /\.|\[|\]|\"|\'|\s/;
 
 function tokenizePath(path, allowKeys) {
   const res = [],
@@ -90,10 +91,9 @@ function evalCreate(obj, path) {
     if (isNotObjectLike(obj[key])) obj[key] = {};
     obj = obj[key];
   }
-  if (!hasOwn(obj, (key = path[0]))) obj[key] = {};
+  if (!hasOwn(obj, (path = path[0]))) obj[path] = {};
 }
 
-const escapeReg = /\.|\[|\]|\"|\'|\s/;
 function keysIterator(obj, currentPath) {
   let keys = Object.keys(obj);
   if (keys.length === 0) return currentPath ? [currentPath] : [];
