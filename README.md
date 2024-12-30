@@ -1,7 +1,7 @@
 # PathSage
 
-An advanced library for manipulating and accessing nested objects and arrays using path notation.
-With features like path tokenization, simple caching and configuration,
+An advanced library for manipulating and accessing nested objects and arrays using path notations.
+With features like path tokenization, simple caching, configuration and more,
 **PathSage** makes working with nested objects more performant and easy-to-use.
 
 ## Table of Contents
@@ -27,7 +27,6 @@ With features like path tokenization, simple caching and configuration,
 - **Minimum Version:** Supports Node v6 out of the box!
 - **Types/Docs:** Integrated Types and JSDoc comments for better useability.
 - **Testing:** Tests for all components. (over 46 Tests with nearly 100% coverage. See [Testing](#testing)).
-- **Validation:** Validation of invalid inputs and paths.
 
 ## Installation
 
@@ -120,6 +119,21 @@ console.log(PathSage.hasProperty(obj, "user.profile.age"));
 // Output: false
 ```
 
+### create(object: ObjectLike, path: String)
+
+Create a path in an object.
+
+#### Example:
+
+```javascript
+var emptyObj = {};
+
+PathSage.create(emptyObj, "user.profile.age");
+
+console.log(emptyObj);
+// Output: { user: { profile: { age: {}}}}
+```
+
 ### keys(object: ObjectLike)
 
 Returns an array including every available path. Non-empty objects and arrays are iterated and not included themselves.
@@ -148,7 +162,7 @@ PathSage.clearCache();
 
 ### configure(options?: Object)
 
-Configures the cache, tokenizer and validator.
+Configures the cache and tokenizer.
 
 #### Example:
 
@@ -175,9 +189,11 @@ Enabling it could potentially open security issues!!
 
 ## Performance
 
+Performance Benchmarks will come in the next version (coming soon)!
+
 ## Size
 
-It is extremely small with only 5.7Kb(minified + gzipped) and 15.7Kb(minified)! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
+It is extremely small with only 5.7Kb (minified + gzipped) and 16Kb (minified)! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
 
 ## Contributing
 
