@@ -20,7 +20,7 @@ function tokenizePath(path, allowKeys) {
       throw new SyntaxError("Disallowed Key encountered");
     res.push(token);
   }
-  if (!isArray(res)) throw new SyntaxError("Could not tokenize Notation");
+  //if (!isArray(res)) throw new SyntaxError("Could not tokenize Notation");
   return res;
 }
 

@@ -52,16 +52,7 @@ function checkQuotes(path) {
 function isArray2(a) {
   return a && a.constructor === Array;
 }
-function entriesPolyFill(obj) {
-  let keys = Object.keys(obj);
-  let key, i;
-  for (i = keys.length; i-- > 0; ) {
-    keys[i] = [(key = keys[i]), obj[key]];
-  }
-  return keys;
-}
 const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
-const entries = Object.entries || entriesPolyFill;
 const isArray = Array.isArray || isArray2;
 
 module.exports = {
@@ -72,5 +63,4 @@ module.exports = {
   hasOwn,
   isArray,
   isNotObjectLike,
-  entries,
 };

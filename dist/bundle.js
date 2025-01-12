@@ -13,7 +13,6 @@ const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
 const escapeReg = /\.|\[|\]|\"|\'|\s/;
 
 const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
-const entries = Object.entries || entriesPolyFill;
 const isArray = Array.isArray || isArray2;
 
 function isNotObjectLike(obj) {
@@ -70,14 +69,6 @@ function checkQuotes(path) {
 function isArray2(a) {
   return a && a.constructor === Array;
 }
-function entriesPolyFill(obj) {
-  let keys = Object.keys(obj);
-  let key, i;
-  for (i = keys.length; i-- > 0; ) {
-    keys[i] = [(key = keys[i]), obj[key]];
-  }
-  return keys;
-}
 
 function tokenizePath(path, allowKeys) {
   const res = [],
@@ -90,7 +81,7 @@ function tokenizePath(path, allowKeys) {
       throw new SyntaxError("Disallowed Key encountered");
     res.push(token);
   }
-  if (!isArray(res)) throw new SyntaxError("Could not tokenize Notation");
+  //if (!isArray(res)) throw new SyntaxError("Could not tokenize Notation");
   return res;
 }
 

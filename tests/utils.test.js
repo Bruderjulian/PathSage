@@ -1,4 +1,4 @@
-const {equal, ok, throws, doesNotThrow, deepEqual} = require("node:assert");
+const { equal, ok, throws, doesNotThrow } = require("node:assert");
 const { describe, it } = require("node:test");
 var utils = require("../src/utils.js");
 
@@ -60,18 +60,6 @@ describe("utils", () => {
     equal(utils.hasOwn(new Object(Object.create(null)), "a"), false);
     equal(utils.hasOwn(new Object(Object.create(null))), false);
   });
-  it("entries", function () {
-    deepEqual(utils.entries({ a: 1 }), [["a", 1]]);
-    deepEqual(utils.entries([1]), [["0", 1]]);
-    deepEqual(utils.entries({ a: 1, b: { v: 1 } }), [
-      ["a", 1],
-      ["b", { v: 1 }],
-    ]);
-    deepEqual(utils.entries(Object.create(null)), []);
-    deepEqual(utils.entries({}), []);
-    deepEqual(utils.entries([]), []);
-  });
-  Object.entries = undefined;
   Object.hasOwn = undefined;
   Array.isArray = undefined;
   utils = fresh("../src/utils.js");
@@ -130,17 +118,6 @@ describe("utils", () => {
     equal(utils.hasOwn(new Object(Object.create(null)), ""), false);
     equal(utils.hasOwn(new Object(Object.create(null)), "a"), false);
     equal(utils.hasOwn(new Object(Object.create(null))), false);
-  });
-  it("entries Mock", function () {
-    deepEqual(utils.entries({ a: 1 }), [["a", 1]]);
-    deepEqual(utils.entries([1]), [["0", 1]]);
-    deepEqual(utils.entries({ a: 1, b: { v: 1 } }), [
-      ["a", 1],
-      ["b", { v: 1 }],
-    ]);
-    deepEqual(utils.entries(Object.create(null)), []);
-    deepEqual(utils.entries({}), []);
-    deepEqual(utils.entries([]), []);
   });
   it("checkObject", function () {
     doesNotThrow(() => utils.checkObject({}));
@@ -221,7 +198,7 @@ describe("utils", () => {
     throws(() => utils.checkNotation(new Array()));
     throws(() => utils.checkNotation(arguments));
     throws(() => utils.checkNotation(new Object()));
-    throws(() => utils.checkNotation(new Symbol("")));
+    throws(() => utils.checkNotation(Symbol("")));
     throws(() => utils.checkNotation(func));
   });
   describe("checkNotation Brackets", function () {
