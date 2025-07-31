@@ -20,7 +20,7 @@ import {
 var _cache = {};
 var _allowKeys = false;
 var _currentSize = 0;
-var _cacheSize = -1;
+var _cacheSize = 4096;
 
 export function set(object, path, value) {
   checkObject(object);

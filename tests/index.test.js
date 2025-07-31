@@ -6,7 +6,7 @@ describe("API Tests", function () {
   it("defaults", function () {
     const defaults = {
       cache: {},
-      cacheSize: -1,
+      cacheSize: 4096,
       currentSize: 0,
       allowKeys: false,
     };
