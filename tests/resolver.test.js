@@ -1,13 +1,13 @@
-const { equal, deepEqual, throws } = require("node:assert");
-const { describe, it } = require("node:test");
-const {
+import { equal, deepEqual, throws } from "node:assert";
+import { describe, it } from "node:test";
+import {
   evalHas,
   evalCreate,
   keysIterator,
   evalGetProperty,
   evalSetProperty,
   evalRemoveProperty,
-} = require("../src/lib.js");
+} from "../src/lib.js";
 
 describe("resolvers", () => {
   it("evalSetProperty", function () {

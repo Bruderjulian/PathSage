@@ -1,6 +1,6 @@
-const { tokenizePath } = require("../src/lib.js");
-const { deepEqual, throws, doesNotThrow } = require("node:assert");
-const { describe, it } = require("node:test");
+import { tokenizePath } from "../src/lib.js";
+import { deepEqual, throws, doesNotThrow } from "node:assert";
+import { describe, it } from "node:test";
 
 describe("tokenizePath", () => {
   it("must handle an empty string", () => {

@@ -1,16 +1,16 @@
-const { deepEqual, throws, equal, doesNotThrow } = require("node:assert");
-const { describe, it } = require("node:test");
-const { PathSage, getPrivates } = require("../index.js");
+import { deepEqual, throws, equal, doesNotThrow } from "node:assert";
+import { describe, it } from "node:test";
+import * as PathSage from "../index.js";
 
 describe("API Tests", function () {
   it("defaults", function () {
-    let defaults = {
+    const defaults = {
       cache: {},
       cacheSize: -1,
       currentSize: 0,
       allowKeys: false,
     };
-    let state = getPrivates();
+    const state = PathSage.getPrivates();
     deepEqual(state, defaults);
   });
   it("must handle configurations", function () {
@@ -21,12 +21,12 @@ describe("API Tests", function () {
       allowKeys: true,
       cacheSize: 32,
     });
-    let state = getPrivates();
+    let state = PathSage.getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 32);
 
     PathSage.configure({ cacheSize: -2 });
-    state = getPrivates();
+    state = PathSage.getPrivates();
     deepEqual(state.cacheSize, 32);
     deepEqual(state.allowKeys, true);
 
@@ -34,23 +34,16 @@ describe("API Tests", function () {
       allowKeys: false,
       cacheSize: 16,
     });
-    state = getPrivates();
+    state = PathSage.getPrivates();
     deepEqual(state.allowKeys, false);
     deepEqual(state.cacheSize, 16);
 
     PathSage.configure({
       allowKeys: true,
     });
-    state = getPrivates();
+    state = PathSage.getPrivates();
     deepEqual(state.allowKeys, true);
     deepEqual(state.cacheSize, 16);
-
-    PathSage.configure({
-      cacheSize: 2.3,
-    });
-    state = getPrivates();
-    deepEqual(state.allowKeys, true);
-    deepEqual(state.cacheSize, 2);
   });
 
   it("clear Cache", function () {
@@ -61,73 +54,63 @@ describe("API Tests", function () {
     PathSage.configure({
       cacheSize: 2,
     });
-    state = getPrivates();
+    let state = PathSage.getPrivates();
     equal(state.cacheSize, 2);
     clearCache();
 
     let obj = { a: [1, 2], b: 4 };
-    PathSage.getProperty(obj, "a[0]");
-    state = getPrivates();
+    PathSage.get(obj, "a[0]");
+    state = PathSage.getPrivates();
     equal(state.currentSize, 1);
-    PathSage.getProperty(obj, "a[1]");
-    state = getPrivates();
+    PathSage.get(obj, "a[1]");
+    state = PathSage.getPrivates();
     equal(state.currentSize, 2);
-    PathSage.getProperty(obj, "a[2]");
-    state = getPrivates();
+    PathSage.get(obj, "a[2]");
+    state = PathSage.getPrivates();
     equal(state.currentSize, 1);
   });
 
   // Methods
   it("throw Errors", function () {
-    throws(() => PathSage.setProperty(1, ""));
-    throws(() => PathSage.setProperty(undefined, ""));
-    throws(() => PathSage.setProperty({}, {}));
-    doesNotThrow(() => PathSage.setProperty({}, []));
-    throws(() => PathSage.setProperty({}, 1));
-    throws(() => PathSage.setProperty({}, undefined));
-    throws(() => PathSage.setProperty(undefined, undefined));
-    doesNotThrow(() => PathSage.setProperty({}, []));
-    doesNotThrow(() => PathSage.setProperty({}, ""));
+    throws(() => PathSage.set(1, ""));
+    throws(() => PathSage.set(undefined, ""));
+    throws(() => PathSage.set({}, {}));
+    doesNotThrow(() => PathSage.set({}, []));
+    throws(() => PathSage.set({}, 1));
+    throws(() => PathSage.set({}, undefined));
+    throws(() => PathSage.set(undefined, undefined));
+    doesNotThrow(() => PathSage.set({}, []));
+    doesNotThrow(() => PathSage.set({}, ""));
 
-    throws(() => PathSage.getProperty(1, ""));
-    throws(() => PathSage.getProperty(undefined, ""));
-    throws(() => PathSage.getProperty({}, {}));
-    doesNotThrow(() => PathSage.getProperty({}, []));
-    throws(() => PathSage.getProperty({}, 1));
-    throws(() => PathSage.getProperty({}, undefined));
-    throws(() => PathSage.getProperty(undefined, undefined));
-    doesNotThrow(() => PathSage.getProperty({}, []));
-    doesNotThrow(() => PathSage.getProperty({}, ""));
+    throws(() => PathSage.get(1, ""));
+    throws(() => PathSage.get(undefined, ""));
+    throws(() => PathSage.get({}, {}));
+    doesNotThrow(() => PathSage.get({}, []));
+    throws(() => PathSage.get({}, 1));
+    throws(() => PathSage.get({}, undefined));
+    throws(() => PathSage.get(undefined, undefined));
+    doesNotThrow(() => PathSage.get({}, []));
+    doesNotThrow(() => PathSage.get({}, ""));
 
-    throws(() => PathSage.hasProperty(1, ""));
-    throws(() => PathSage.hasProperty(undefined, ""));
-    throws(() => PathSage.hasProperty({}, {}));
-    doesNotThrow(() => PathSage.hasProperty({}, []));
-    throws(() => PathSage.hasProperty({}, 1));
-    throws(() => PathSage.hasProperty({}, undefined));
-    throws(() => PathSage.hasProperty(undefined, undefined));
-    doesNotThrow(() => PathSage.hasProperty({}, []));
-    doesNotThrow(() => PathSage.hasProperty({}, ""));
+    throws(() => PathSage.has(1, ""));
+    throws(() => PathSage.has(undefined, ""));
+    throws(() => PathSage.has({}, {}));
+    doesNotThrow(() => PathSage.has({}, []));
+    throws(() => PathSage.has({}, 1));
+    throws(() => PathSage.has({}, undefined));
+    throws(() => PathSage.has(undefined, undefined));
+    doesNotThrow(() => PathSage.has({}, []));
+    doesNotThrow(() => PathSage.has({}, ""));
 
-    throws(() => PathSage.removeProperty(1, ""));
-    throws(() => PathSage.removeProperty(undefined, ""));
-    throws(() => PathSage.removeProperty({}, {}));
-    doesNotThrow(() => PathSage.removeProperty({}, []));
-    throws(() => PathSage.removeProperty({}, 1));
-    throws(() => PathSage.removeProperty({}, undefined));
-    throws(() => PathSage.removeProperty(undefined, undefined));
-    doesNotThrow(() => PathSage.removeProperty({}, []));
-    doesNotThrow(() => PathSage.removeProperty({}, ""));
-
-    throws(() => PathSage.deleteProperty(1, ""));
-    throws(() => PathSage.deleteProperty(undefined, ""));
-    throws(() => PathSage.deleteProperty({}, {}));
-    doesNotThrow(() => PathSage.deleteProperty({}, []));
-    throws(() => PathSage.deleteProperty({}, 1));
-    throws(() => PathSage.deleteProperty({}, undefined));
-    throws(() => PathSage.deleteProperty(undefined, undefined));
-    doesNotThrow(() => PathSage.deleteProperty({}, []));
-    doesNotThrow(() => PathSage.deleteProperty({}, ""));
+    throws(() => PathSage.remove(1, ""));
+    throws(() => PathSage.remove(undefined, ""));
+    throws(() => PathSage.remove({}, {}));
+    doesNotThrow(() => PathSage.remove({}, []));
+    throws(() => PathSage.remove({}, 1));
+    throws(() => PathSage.remove({}, undefined));
+    throws(() => PathSage.remove(undefined, undefined));
+    doesNotThrow(() => PathSage.remove({}, []));
+    doesNotThrow(() => PathSage.remove({}, ""));
 
     throws(() => PathSage.create(1, ""));
     throws(() => PathSage.create({}, {}));
@@ -164,82 +147,64 @@ describe("API Tests", function () {
     deepEqual(out, out2);
   });
 
-  it("setProperty", function () {
+  it("set", function () {
     clearCache();
     let obj = { a: [1, 2], b: 4 };
-    PathSage.setProperty(obj, "a[0]", 5);
+    PathSage.set(obj, "a[0]", 5);
     deepEqual(obj, { a: [5, 2], b: 4 });
     testCache();
 
     clearCache();
-    PathSage.setProperty(obj, "b", 6);
+    PathSage.set(obj, "b", 6);
     deepEqual(obj, { a: [5, 2], b: 6 });
     testCache2();
 
-    PathSage.setProperty(obj, "c", 7);
+    PathSage.set(obj, "c", 7);
     deepEqual(obj, { a: [5, 2], b: 6, c: 7 });
   });
 
-  it("getProperty", function () {
+  it("get", function () {
     clearCache();
     let obj = { a: [1, 2], b: 4 };
-    let out = PathSage.getProperty(obj, "a[0]");
+    let out = PathSage.get(obj, "a[0]");
     deepEqual(out, 1);
     deepEqual(obj, obj);
     testCache();
 
-    out = PathSage.getProperty(obj, "c");
+    out = PathSage.get(obj, "c");
     deepEqual(out, undefined);
     deepEqual(obj, obj);
   });
 
-  it("hasProperty", function () {
+  it("has", function () {
     clearCache();
     let obj = { a: [1, 2], b: 4 };
-    let out = PathSage.hasProperty(obj, "a[0]", false);
+    let out = PathSage.has(obj, "a[0]", false);
     deepEqual(out, true);
     deepEqual(obj, { a: [1, 2], b: 4 });
     testCache();
 
-    out = PathSage.hasProperty(obj, "c", false);
+    out = PathSage.has(obj, "c", false);
     deepEqual(out, false);
     deepEqual(obj, { a: [1, 2], b: 4 });
 
-    out = PathSage.hasProperty(obj, "c", true);
+    out = PathSage.has(obj, "c", true);
     deepEqual(out, { depth: 0, left: 1, failedKey: "c", currentObject: obj });
     deepEqual(obj, { a: [1, 2], b: 4 });
   });
 
-  it("removeProperty", function () {
+  it("remove", function () {
     clearCache();
     let obj = { a: [1, 2], b: 4 };
-    PathSage.removeProperty(obj, "a[0]");
+    PathSage.remove(obj, "a[0]");
     deepEqual(obj, { a: [2], b: 4 });
     testCache();
 
-    throws(() => PathSage.removeProperty(obj, "a[b]"));
+    throws(() => PathSage.remove(obj, "a[b]"));
     deepEqual(obj, { a: [2], b: 4 });
 
     clearCache();
-    PathSage.removeProperty(obj, "b");
-    deepEqual(obj, { a: [2] });
-    testCache2();
-  });
-
-  it("deleteProperty", function () {
-    clearCache();
-    let obj = { a: [1, 2], b: 4 };
-    PathSage.deleteProperty(obj, "a[0]");
-    deepEqual(obj, { a: [2], b: 4 });
-    testCache();
-
-    clearCache();
-    throws(() => PathSage.deleteProperty(obj, "a.b"));
-    state = getPrivates();
-    deepEqual(state.cache, { "a.b": ["b", "a"] });
-
-    clearCache();
-    PathSage.deleteProperty(obj, "b");
+    PathSage.remove(obj, "b");
     deepEqual(obj, { a: [2] });
     testCache2();
   });
@@ -259,19 +224,19 @@ describe("API Tests", function () {
     let obj = { a: [1, 2], b: 4 };
     clearCache();
 
-    let out = PathSage.getProperty(obj, "a[0]");
+    let out = PathSage.get(obj, "a[0]");
     deepEqual(out, 1);
     testCache();
 
-    out = PathSage.getProperty(obj, "a[0]");
+    out = PathSage.get(obj, "a[0]");
     deepEqual(out, 1);
-    state = getPrivates();
+    let state = PathSage.getPrivates();
     deepEqual(state.cache, { "a[0]": ["0", "a"] });
     deepEqual(state.currentSize, 1);
 
-    out = PathSage.getProperty(obj, "b");
+    out = PathSage.get(obj, "b");
     deepEqual(out, 4);
-    state = getPrivates();
+    state = PathSage.getPrivates();
     deepEqual(state.cache, {
       "a[0]": ["0", "a"],
       b: ["b"],
@@ -282,19 +247,19 @@ describe("API Tests", function () {
 
 function clearCache() {
   PathSage.clearCache();
-  state = getPrivates();
+  const state = PathSage.getPrivates();
   deepEqual(state.cache, {});
   deepEqual(state.currentSize, 0);
 }
 
 function testCache() {
-  state = getPrivates();
+  const state = PathSage.getPrivates();
   deepEqual(state.cache, { "a[0]": ["0", "a"] });
   deepEqual(state.currentSize, 1);
 }
 
 function testCache2() {
-  state = getPrivates();
+  const state = PathSage.getPrivates();
   deepEqual(state.cache, { b: ["b"] });
   deepEqual(state.currentSize, 1);
 }

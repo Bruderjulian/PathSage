@@ -1,15 +1,23 @@
-const { equal, ok, throws, doesNotThrow } = require("node:assert");
-const { describe, it } = require("node:test");
-var utils = require("../src/utils.js");
+import { equal, ok, throws, doesNotThrow } from "node:assert";
+import { describe, it } from "node:test";
+import * as utils from "../src/utils.js";
 
 const func = function () {};
+function isObject(o) {
+  return !utils.isNotObjectLike(o) && !utils.isArray(o);
+}
 
-describe("utils", () => {
+describe("utils", async function () {
   it("isArray", function () {
     ok(utils.isArray([]));
     ok(utils.isArray(new Array()));
-    //equal(utils.isArray(), false);
+    ok(utils.isArray(new Array(2)));
+    equal(utils.isArray(), false);
     equal(utils.isArray(true), false);
+    equal(utils.isArray(false), false);
+    equal(utils.isArray(1), false);
+    equal(utils.isArray(undefined), false);
+    equal(utils.isArray(NaN), false);
     equal(utils.isArray(""), false);
     equal(utils.isArray(arguments), false);
     equal(utils.isArray({}), false);
@@ -17,67 +25,11 @@ describe("utils", () => {
     equal(utils.isArray(Object.create(null)), false);
     equal(utils.isArray(func), false);
     equal(utils.isArray(Symbol([])), false);
+    equal(utils.isArray(Symbol({})), false);
+    equal(utils.isArray(Symbol("")), false);
+    equal(utils.isArray(Symbol(1)), false);
   });
   it("hasOwn", function () {
-    equal(utils.hasOwn({}, ""), false);
-    equal(utils.hasOwn({ a: 1 }, "a"), true);
-    equal(utils.hasOwn({ a: {} }, "a"), true);
-    equal(utils.hasOwn({ a: [] }, "a"), true);
-    equal(utils.hasOwn({ a: undefined }, "a"), true);
-    equal(utils.hasOwn({ a: null }, "a"), true);
-
-    equal(utils.hasOwn({}, "a"), false);
-    equal(utils.hasOwn([], 0), false);
-    equal(utils.hasOwn([], "0"), false);
-    equal(utils.hasOwn([1], 0), true);
-    equal(utils.hasOwn([1], "0"), true);
-    equal(utils.hasOwn([undefined], 0), true);
-    equal(utils.hasOwn([null], "0"), true);
-
-    equal(utils.hasOwn(new Array([1]), 0), true);
-    equal(utils.hasOwn(new Array([1]), "0"), true);
-    equal(utils.hasOwn(new Object([1]), 0), true);
-    equal(utils.hasOwn(new Object([1]), "0"), true);
-    // sparse Arrays
-    equal(utils.hasOwn(new Array(1), "0"), false);
-    equal(utils.hasOwn(new Array(1), 0), false);
-
-    equal(utils.hasOwn(arguments, 0), true);
-    equal(utils.hasOwn(arguments, "0"), true);
-    equal(utils.hasOwn(new Object(arguments), 0), true);
-    equal(utils.hasOwn(new Object(arguments), "0"), true);
-    equal(utils.hasOwn(new Array(arguments), 0), true);
-    equal(utils.hasOwn(new Array(arguments), "0"), true);
-
-    equal(utils.hasOwn(Object.create(null), ""), false);
-    equal(utils.hasOwn(Object.create(null), "a"), false);
-    equal(utils.hasOwn(Object.create(null)), false);
-    equal(utils.hasOwn({}), false);
-    equal(utils.hasOwn([]), false);
-    equal(utils.hasOwn(new Object({})), false);
-    equal(utils.hasOwn(new Object([])), false);
-    equal(utils.hasOwn(new Object(Object.create(null)), ""), false);
-    equal(utils.hasOwn(new Object(Object.create(null)), "a"), false);
-    equal(utils.hasOwn(new Object(Object.create(null))), false);
-  });
-  Object.hasOwn = undefined;
-  Array.isArray = undefined;
-  utils = fresh("../src/utils.js");
-
-  it("isArray Mock", function () {
-    ok(utils.isArray([]));
-    ok(utils.isArray(new Array()));
-    //equal(utils.isArray(), false);
-    equal(utils.isArray(true), false);
-    equal(utils.isArray(""), false);
-    equal(utils.isArray(arguments), false);
-    equal(utils.isArray({}), false);
-    equal(utils.isArray(new Object()), false);
-    equal(utils.isArray(Object.create(null)), false);
-    equal(utils.isArray(func), false);
-    equal(utils.isArray(Symbol([])), false);
-  });
-  it("hasOwn Mock", function () {
     equal(utils.hasOwn({}, ""), false);
     equal(utils.hasOwn({ a: 1 }, "a"), true);
     equal(utils.hasOwn({ a: {} }, "a"), true);
@@ -122,67 +74,129 @@ describe("utils", () => {
   it("checkObject", function () {
     doesNotThrow(() => utils.checkObject({}));
     doesNotThrow(() => utils.checkObject([]));
-    doesNotThrow(() => utils.checkObject(new Object({})));
-    doesNotThrow(() => utils.checkObject(new Array([])));
+    doesNotThrow(() => utils.checkObject(new Array()), false);
+    doesNotThrow(() => utils.checkObject(new Object()), false);
+    doesNotThrow(() => utils.checkObject(new Object({})), false);
+    doesNotThrow(() => utils.checkObject(new Object(arguments)), false);
+    doesNotThrow(() => utils.checkObject(Object.create(null)));
+    throws(() => utils.checkObject(Object));
     throws(() => utils.checkObject());
     throws(() => utils.checkObject(""));
     throws(() => utils.checkObject(1));
     throws(() => utils.checkObject(true));
+    throws(() => utils.checkObject(false));
+    throws(() => utils.checkObject(NaN));
     throws(() => utils.checkObject(null));
     throws(() => utils.checkObject(undefined));
     throws(() => utils.checkObject(func));
     throws(() => utils.checkObject(Symbol({})));
+    throws(() => utils.checkObject(Symbol([])));
+    throws(() => utils.checkObject(Symbol("")));
+    throws(() => utils.checkObject(Symbol()));
+    throws(() => utils.checkObject(BigInt(1)));
   });
   it("isNotObjectLike", function () {
     equal(utils.isNotObjectLike({}), false);
     equal(utils.isNotObjectLike([]), false);
+    equal(utils.isNotObjectLike(new Array()), false);
+    equal(utils.isNotObjectLike(new Object()), false);
+    equal(utils.isNotObjectLike(new Object({})), false);
+    equal(utils.isNotObjectLike(new Object(arguments)), false);
     equal(utils.isNotObjectLike(Object.create(null)), false);
-    equal(utils.isNotObjectLike(arguments), false);
-    equal(utils.isNotObjectLike(null), true);
-    equal(utils.isNotObjectLike(undefined), true);
-    equal(utils.isNotObjectLike(true), true);
-    equal(utils.isNotObjectLike(""), true);
-    equal(utils.isNotObjectLike(1), true);
-    equal(utils.isNotObjectLike(Symbol("")), true);
+    ok(utils.isNotObjectLike(Object));
+    ok(utils.isNotObjectLike());
+    ok(utils.isNotObjectLike(""));
+    ok(utils.isNotObjectLike(1));
+    ok(utils.isNotObjectLike(true));
+    ok(utils.isNotObjectLike(false));
+    ok(utils.isNotObjectLike(NaN));
+    ok(utils.isNotObjectLike(null));
+    ok(utils.isNotObjectLike(undefined));
+    ok(utils.isNotObjectLike(func));
+    ok(utils.isNotObjectLike(Symbol({})));
+    ok(utils.isNotObjectLike(Symbol([])));
+    ok(utils.isNotObjectLike(Symbol("")));
+    ok(utils.isNotObjectLike(Symbol()));
+    ok(utils.isNotObjectLike(BigInt(1)));
   });
   it("isObject", function () {
-    ok(utils.isObject({}));
-    ok(utils.isObject(new Object({})));
-    ok(utils.isObject(new Object(arguments)));
-    // review Objects with Null Prototype
-    ok(utils.isObject(Object.create(null)));
-
-    equal(utils.isObject([]), false);
-    equal(utils.isObject(new Array([])), false);
-    equal(utils.isObject(new Object([])), false);
-    equal(utils.isObject(), false);
-    equal(utils.isObject(""), false);
-    equal(utils.isObject(1), false);
-    equal(utils.isObject(true), false);
-    equal(utils.isObject(null), false);
-    equal(utils.isObject(undefined), false);
-    equal(utils.isObject(func), false);
-    equal(utils.isObject(Symbol({})), false);
+    ok(isObject({}));
+    equal(isObject([]), false);
+    equal(isObject(new Array()), false);
+    ok(isObject(new Object()));
+    ok(isObject(new Object({})));
+    ok(isObject(new Object(arguments)));
+    ok(isObject(Object.create(null)));
+    equal(isObject(Object), false);
+    equal(isObject(), false);
+    equal(isObject(""), false);
+    equal(isObject(1), false);
+    equal(isObject(true), false);
+    equal(isObject(false), false);
+    equal(isObject(NaN), false);
+    equal(isObject(null), false);
+    equal(isObject(undefined), false);
+    equal(isObject(func), false);
+    equal(isObject(Symbol({})), false);
+    equal(isObject(Symbol([])), false);
+    equal(isObject(Symbol("")), false);
+    equal(isObject(Symbol()), false);
+    equal(isObject(BigInt(1)), false);
   });
   it("validCacheSize", function () {
+    equal(utils.validCacheSize(-2), false);
     ok(utils.validCacheSize(-1));
     ok(utils.validCacheSize(0));
+    ok(utils.validCacheSize(1));
     ok(utils.validCacheSize(256));
-    ok(utils.validCacheSize(2.0));
-    ok(utils.validCacheSize(parseInt("1", 10)));
-    ok(utils.validCacheSize(parseInt("1.5", 10)));
-    equal(utils.validCacheSize(parseInt("-2", 10)), false);
-    equal(utils.validCacheSize(-2), false);
-    equal(utils.validCacheSize(new Number(1)), false);
+    equal(utils.validCacheSize("-2"), false);
+    ok(utils.validCacheSize("-1"));
+    ok(utils.validCacheSize("0"));
+    ok(utils.validCacheSize("1"));
+    ok(utils.validCacheSize("256"));
+
+    equal(utils.validCacheSize(-2.0), false);
+    equal(utils.validCacheSize(-1.0), true);
+    equal(utils.validCacheSize(0.0), true);
+    equal(utils.validCacheSize(1.0), true);
+    equal(utils.validCacheSize(256.0), true);
+    equal(utils.validCacheSize(-1.1), false);
+    equal(utils.validCacheSize(0.1), false);
+    equal(utils.validCacheSize(1.1), false);
+    equal(utils.validCacheSize(256.1), false);
+    equal(utils.validCacheSize(Number.MAX_SAFE_INTEGER - 1), true);
+    equal(utils.validCacheSize(Number.MAX_SAFE_INTEGER), true);
+    equal(utils.validCacheSize(Number.MAX_SAFE_INTEGER + 1), false);
+    equal(utils.validCacheSize("-2.0"), false);
+    equal(utils.validCacheSize("-1.0"), true);
+    equal(utils.validCacheSize("0.0"), true);
+    equal(utils.validCacheSize("1.0"), true);
+    equal(utils.validCacheSize("256.0"), true);
+    equal(utils.validCacheSize("-1.1"), false);
+    equal(utils.validCacheSize("0.1"), false);
+    equal(utils.validCacheSize("1.1"), false);
+    equal(utils.validCacheSize("256.1"), false);
 
     equal(utils.validCacheSize(), false);
     equal(utils.validCacheSize(undefined), false);
     equal(utils.validCacheSize(null), false);
     equal(utils.validCacheSize(NaN), false);
     equal(utils.validCacheSize(true), false);
+    equal(utils.validCacheSize(false), false);
     equal(utils.validCacheSize(""), false);
     equal(utils.validCacheSize([]), false);
     equal(utils.validCacheSize({}), false);
+
+    equal(utils.validCacheSize(NaN), false);
+    equal(utils.validCacheSize(new Number(1)), false);
+    equal(utils.validCacheSize(0x1), true);
+    equal(utils.validCacheSize(0b1), true);
+    equal(utils.validCacheSize(0o1), true);
+    equal(utils.validCacheSize(BigInt(1)), false);
+    equal(utils.validCacheSize(Symbol(256)), false);
+    equal(utils.validCacheSize(new Object(1)), false);
+    equal(utils.validCacheSize(new Array()), false);
+    equal(utils.validCacheSize(Object.create(null)), false);
   });
   it("checkNotation", function () {
     doesNotThrow(() => utils.checkNotation(""));
@@ -191,6 +205,9 @@ describe("utils", () => {
     doesNotThrow(() => utils.checkNotation("a.b.c"));
     throws(() => utils.checkNotation());
     throws(() => utils.checkNotation(false));
+    throws(() => utils.checkNotation(true));
+    throws(() => utils.checkNotation(undefined));
+    throws(() => utils.checkNotation(NaN));
     throws(() => utils.checkNotation(1));
     throws(() => utils.checkNotation([]));
     throws(() => utils.checkNotation({}));
@@ -245,12 +262,3 @@ describe("utils", () => {
     });
   });
 });
-
-function fresh(file) {
-  file = require.resolve(file);
-  var tmp = require.cache[file];
-  delete require.cache[file];
-  var mod = require(file);
-  require.cache[file] = tmp;
-  return mod;
-}
