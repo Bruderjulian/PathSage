@@ -13,7 +13,7 @@ export interface ConfigOptions {
 /** Library for working with nested objects with path notations
  * @name PathSage
  * @author BruderJulian <https://github.com/Bruderjulian>
- * @version 1.5.0 */
+ * @version 1.6.0 */
 export declare class PathSage {
   /**  Set a property at a given path to a given value.
    *  @param {ObjectLike} object - object to set the value in
