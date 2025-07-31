@@ -1,7 +1,7 @@
 # PathSage
 
 An advanced library for manipulating and accessing nested objects and arrays using path notations.
-With features like path tokenization, simple caching, configuration and more,
+With features like path tokenization, caching, optional configuration and more,
 **PathSage** makes working with nested objects more performant and easy-to-use.
 
 ## Table of Contents
@@ -19,11 +19,11 @@ With features like path tokenization, simple caching, configuration and more,
 
 ## Features
 
-- **Comprehensive API:** Set, get, modify, has, remove and create methods are available.
+- **Comprehensive API:** Set, get, has, remove, list and create.
 - **Path Tokenization:** Efficiently tokenizes and caches paths for repeated use.
 - **Fast & Compact:** Being extremely performant and efficient ([Performance](#performance)) while being very small with only 5.7Kb ([Size](#size)).
-- **Configuration Options:** Limit cache size, allow Special keys and more. See [Configuration](#configuration).
-- **No Dependencies:** No extra Dependencies are required!
+- **Configuration:** Optionally configure things but ONLY WHEN NESESSARY. You can limit cache size, allow special keys and more. See [Configuration](#configuration).
+- **No Dependencies:** No extra Dependencies!
 - **Minimum Version:** Supports Node v6 out of the box!
 - **Types/Docs:** Integrated Types and JSDoc comments for better useability.
 - **Testing:** Tests for all components. (over 46 Tests with nearly 100% coverage. See [Testing](#testing)).
@@ -40,17 +40,17 @@ and import it!
 
 ```javascript
 //require
-const { PathSage } = require("path-sage");
+const PathSage = require("path-sage");
 ```
 
 ## Usage
 
 The library exposes the following static methods:
 
-- **setProperty()**: Sets a value at the specified path.
-- **getProperty()**: Retrieves a value from the specified path.
-- **hasProperty()**: Checks if a property exists at the given path.
-- **removeProperty() / deleteProperty()**: Removes a property from the specified path.
+- **set()**: Sets a value at the specified path.
+- **get()**: Retrieves a value from the specified path.
+- **has()**: Checks if a property exists at the given path.
+- **remove()**: Removes a property from the specified path.
 - **create**: Creates a path in an object.
 - **keys() / getPaths()**: Lists all paths within an object.
 - **configure()**: Configures settings.
@@ -62,7 +62,7 @@ If any special keys or the function syntax is used, you can to enable/disable it
 
 ---
 
-### setProperty(object: ObjectLike, path: String, value: any)
+### set(object: ObjectLike, path: String, value: any)
 
 Set the property at a given path to a given value.
 
@@ -72,22 +72,22 @@ Set the property at a given path to a given value.
 var obj = { user: { profile: { name: "Alice" } } };
 
 // Set a value
-PathSage.setProperty(obj, "user.profile.age", 30);
+PathSage.set(obj, "user.profile.age", 30);
 console.log(obj); // Output: { user: { profile: { name: "Alice", age: 30 } } };
 ```
 
-### getProperty(object: ObjectLike, path: String)
+### get(object: ObjectLike, path: String)
 
 Get the value of the property in an object at a given path.
 
 #### Example:
 
 ```javascript
-const age = PathSage.getProperty(obj, "user.profile.age");
+const age = PathSage.get(obj, "user.profile.age");
 console.log(age); // Output: 30
 ```
 
-### hasProperty(object: ObjectLike, path: String, ?detailed: boolean)
+### has(object: ObjectLike, path: String, ?detailed: boolean)
 
 Check whether a property exists in an object at a given path.
 If detailed report is enabled, it will return a ´HasResult´ Object, when a key doesn't exist.
@@ -97,25 +97,23 @@ If detailed report is enabled, it will return a ´HasResult´ Object, when a key
 #### Example:
 
 ```javascript
-const exists = PathSage.hasProperty(obj, "user.profile.age");
+const exists = PathSage.has(obj, "user.profile.age");
 console.log(exists); // Output: true
 
 // Detailed
-const exists = PathSage.hasProperty(obj, "user.profile.age", true);
+const exists = PathSage.has(obj, "user.profile.age", true);
 console.log(exists); // Output: {...}
 ```
 
-### removeProperty(object: ObjectLike, path: String)
+### remove(object: ObjectLike, path: String)
 
 Remove a property at a given path.
-
-#### Alias: deleteProperty()
 
 #### Example:
 
 ```javascript
-PathSage.removeProperty(obj, "user.profile.age");
-console.log(PathSage.hasProperty(obj, "user.profile.age"));
+PathSage.remove(obj, "user.profile.age");
+console.log(PathSage.has(obj, "user.profile.age"));
 // Output: false
 ```
 
@@ -189,7 +187,7 @@ Enabling it could potentially open security issues!!
 
 ## Performance
 
-Performance Benchmarks will come in the next version (coming soon)!
+The Performance Benchmarks will come in the next version (coming soon)! As of writin these, `PathSage` massively outperforms many of popular similar packages!
 
 ## Size
 
@@ -203,9 +201,9 @@ Let me know if you would like to refine or add features to something!
 
 ## Testing
 
-All components, functions or branches are being tested with over 45 Tests and 415 Assertions!
+Everything is being tested with over 45 Tests and 415 Assertions as of now!
 The Tests achieve a near 100% coverage in all stats (lines, branches, functions)!
-I couldn't test some error-catching branches (only 2) because I haven't found a case where these branches are being executed.
+I couldn't test some error-catching stuff (only 2) because I haven't found a case where these branches are being executed. These don't affect performance nor size!
 
 To run tests, first clone repo and then run the following command:
 
