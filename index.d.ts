@@ -22,7 +22,7 @@ export declare class PathSage {
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
    *  @throws {EvalError} - if the path could not be fully evaluated
    */
-  static setProperty(object: ObjectLike, path: string, value: unknown): void;
+  static set(object: ObjectLike, path: string, value: unknown): void;
   /**  Get the value of a property in an object or array at a given path.
    *  @param {ObjectLike} object - object to get the value from.
    *  @param {string} path - path of the property, using the notation
@@ -30,19 +30,19 @@ export declare class PathSage {
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
    *  @throws {EvalError} - if the path could not be fully evaluated.
    */
-  static getProperty(object: ObjectLike, path: string): unknown;
+  static get(object: ObjectLike, path: string): unknown;
   /**  Check whether a property in an object or array at a given path exists.
    *  @param {ObjectLike} object - object to check.
    *  @param {string} path - path of the property, using the notation
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
    */
-  static hasProperty(object: ObjectLike, path: string): boolean;
+  static has(object: ObjectLike, path: string): boolean;
   /**  Check whether a property in an object or array at a given path exists.
    *  @param {ObjectLike} object - object to check.
    *  @param {string} path - path of the property, using the notation
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
    */
-  static hasProperty(
+  static has(
     object: ObjectLike,
     path: string,
     detailed: boolean
@@ -53,14 +53,7 @@ export declare class PathSage {
    *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
    *  @throws {EvalError} - if the path could not be fully evaluated.
    */
-  static removeProperty(object: ObjectLike, path: string): void;
-  /** Delete a property in an object or array at a given path. If the path is empty, an empty object or array is returned.
-   * @param {ObjectLike} object - object to remove the property from.
-   * @param {string} path - path of the property, using the notation
-   * @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
-   * @throws {EvalError} - if the path could not be fully evaluated.
-   * @alias removeProperty */
-  static deleteProperty(object: ObjectLike, path: string): void;
+  static remove(object: ObjectLike, path: string): void;
   /** Returns an array including every path. Non-empty objects or arrays are iterated and not included themselves.
    * @param {ObjectLike} object - The object to iterate through.
    * @throws {SyntaxError} - if the object is `undefined` or `null`
@@ -73,7 +66,7 @@ export declare class PathSage {
   static getPaths(object: ObjectLike): string[];
   /** Creates a path in the object or array. If object is ´undefined´ or ´null´, an empty object will be returned.
    * @param {ObjectLike} object - The object to create path in
-   * @param {string} object - The path to create
+   * @param {string} path - The path to create
    */
   static create(object: ObjectLike, path: string): ObjectLike;
   /** Configures the cache, tokenizer and validator.
