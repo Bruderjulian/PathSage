@@ -1,21 +1,24 @@
-function isNotObjectLike(obj) {
+export function isNotObjectLike(obj) {
   return typeof obj !== "object" || obj === null;
 }
 
-function isObject(obj) {
-  return typeof obj === "object" && !isArray(obj) && obj !== null;
+export function validCacheSize(size) {
+  if (typeof size === "string") size = parseFloat(size, 10);
+  return (
+    typeof size === "number" &&
+    !isNaN(size) &&
+    size === Math.floor(size) &&
+    size >= -1 &&
+    size <= Number.MAX_SAFE_INTEGER
+  );
 }
 
-function validCacheSize(size) {
-  return typeof size === "number" && !isNaN(size) && size >= -1;
-}
-
-function checkObject(obj) {
+export function checkObject(obj) {
   if (typeof obj !== "object" || obj === null)
     throw new SyntaxError("Invalid Object Type");
 }
 
-function checkNotation(path) {
+export function checkNotation(path) {
   if (typeof path !== "string") throw new TypeError("Invalid Notation Type");
   if (path.length === 0) return;
   if (!checkBrackets(path)) {
@@ -26,7 +29,7 @@ function checkNotation(path) {
   }
 }
 
-function checkBrackets(path) {
+export function checkBrackets(path) {
   let counter = 0;
   let current, i, len;
   for (i = 0, len = path.length; i < len; i++) {
@@ -37,7 +40,7 @@ function checkBrackets(path) {
   return counter === 0;
 }
 
-function checkQuotes(path) {
+export function checkQuotes(path) {
   let quote, i, len, current;
   for (i = 0, len = path.length; i < len; i++) {
     current = path[i];
@@ -49,18 +52,10 @@ function checkQuotes(path) {
   return typeof quote === "undefined";
 }
 
-function isArray2(a) {
-  return a && a.constructor === Array;
-}
-const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
-const isArray = Array.isArray || isArray2;
-
-module.exports = {
-  isObject,
-  validCacheSize,
-  checkObject,
-  checkNotation,
-  hasOwn,
-  isArray,
-  isNotObjectLike,
-};
+/* node:coverage ignore next 7 */
+export const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
+export const isArray =
+  Array.isArray ||
+  function (a) {
+    return a && a.constructor === Array;
+  };

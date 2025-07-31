@@ -1,4 +1,4 @@
-const { hasOwn, isArray, isNotObjectLike } = require("./utils");
+import { hasOwn, isArray, isNotObjectLike } from "./utils.js";
 
 const disallowedTokens = new Set([
   "this",
@@ -9,7 +9,7 @@ const disallowedTokens = new Set([
 const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
 const escapeReg = /\.|\[|\]|\"|\'|\s/;
 
-function tokenizePath(path, allowKeys) {
+export function tokenizePath(path, allowKeys) {
   const res = [],
     reg = /\[\s*(\d+)(?=\s*])|\[\s*(["'`])((?:\\.|(?!\2).)*)\2\s*]|[\w$]+/g;
   let a, token;
@@ -20,11 +20,11 @@ function tokenizePath(path, allowKeys) {
       throw new SyntaxError("Disallowed Key encountered");
     res.push(token);
   }
-  //if (!isArray(res)) throw new SyntaxError("Could not tokenize Notation");
+  if (!isArray(res)) throw new SyntaxError("Could not tokenize Notation");
   return res;
 }
 
-function evalSetProperty(obj, path, value) {
+export function evalSetProperty(obj, path, value) {
   if (path.length === 0) return;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
@@ -35,7 +35,7 @@ function evalSetProperty(obj, path, value) {
   obj[path[0]] = value;
 }
 
-function evalGetProperty(obj, path) {
+export function evalGetProperty(obj, path) {
   if (path.length === 0) return obj;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
@@ -46,7 +46,7 @@ function evalGetProperty(obj, path) {
   return obj[path[0]];
 }
 
-function evalRemoveProperty(obj, path) {
+export function evalRemoveProperty(obj, path) {
   if (path.length === 0) {
     for (const key of Object.keys(obj)) delete obj[key];
     return;
@@ -64,7 +64,7 @@ function evalRemoveProperty(obj, path) {
   } else delete obj[path[0]];
 }
 
-function evalHas(obj, path, detailed) {
+export function evalHas(obj, path, detailed) {
   if (path.length === 0) return true;
   for (let i = path.length, key, prop; i-- > 0; ) {
     prop = obj[(key = path[i])];
@@ -84,7 +84,7 @@ function evalHas(obj, path, detailed) {
   return true;
 }
 
-function evalCreate(obj, path) {
+export function evalCreate(obj, path) {
   if (path.length === 0) return obj;
   for (let i = path.length, key; --i > 0; ) {
     key = path[i];
@@ -94,7 +94,7 @@ function evalCreate(obj, path) {
   if (!hasOwn(obj, (path = path[0]))) obj[path] = {};
 }
 
-function keysIterator(obj, currentPath) {
+export function keysIterator(obj, currentPath) {
   let keys = Object.keys(obj);
   if (keys.length === 0) return currentPath ? [currentPath] : [];
   const paths = [];
@@ -117,13 +117,3 @@ function keysIterator(obj, currentPath) {
   }
   return paths;
 }
-
-module.exports = {
-  tokenizePath,
-  evalSetProperty,
-  evalGetProperty,
-  evalRemoveProperty,
-  evalCreate,
-  evalHas,
-  keysIterator,
-};

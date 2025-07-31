@@ -1,4 +1,4 @@
-const {
+import {
   tokenizePath,
   evalCreate,
   evalHas,
@@ -6,16 +6,17 @@ const {
   evalSetProperty,
   evalGetProperty,
   evalRemoveProperty,
-} = require("./src/lib");
+} from "./src/lib.js";
 
-const {
-  isObject,
+import {
   isArray,
+  isNotObjectLike,
   validCacheSize,
   checkObject,
   checkNotation,
-} = require("./src/utils");
+} from "./src/utils.js";
 
+//TODO: change default cache size
 var _cache = {};
 var _allowKeys = false;
 var _currentSize = 0;
@@ -62,14 +63,13 @@ export function clearCache() {
 }
 
 export function configure(options = {}) {
-  if (!isObject(options)) {
+  if (isNotObjectLike(options) || isArray(options)) {
     throw new TypeError("Invalid Options Type");
   }
   if (typeof options.allowKeys === "boolean") {
     _allowKeys = options.allowKeys;
   }
-  let size = parseInt(options.cacheSize, 10);
-  if (validCacheSize(size)) _cacheSize = size;
+  if (validCacheSize(options.cacheSize)) _cacheSize = options.cacheSize;
 }
 
 function tokenize(path) {
