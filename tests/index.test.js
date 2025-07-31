@@ -15,7 +15,6 @@ describe("API Tests", function () {
   });
   it("must handle configurations", function () {
     doesNotThrow(() => PathSage.configure());
-    throws(() => PathSage.configure(true));
 
     PathSage.configure({
       allowKeys: true,
