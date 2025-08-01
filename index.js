@@ -3,9 +3,9 @@ import {
   evalCreate,
   evalHas,
   keysIterator,
-  evalSetProperty,
-  evalGetProperty,
-  evalRemoveProperty,
+  evalSet,
+  evalGet,
+  evalRemove,
 } from "./src/lib.js";
 
 import {
@@ -16,7 +16,6 @@ import {
   checkObject,
 } from "./src/utils.js";
 
-//TODO: change default cache size
 var _cache = {};
 var _allowKeys = false;
 var _currentSize = 0;
@@ -37,12 +36,12 @@ function tokenize(path) {
 
 export function set(object, path, value) {
   checkObject(object);
-  evalSetProperty(object, tokenize(path), value);
+  evalSet(object, tokenize(path), value);
 }
 
 export function get(object, path) {
   checkObject(object);
-  return evalGetProperty(object, tokenize(path));
+  return evalGet(object, tokenize(path));
 }
 
 export function has(object, path, detailed = false) {
@@ -52,7 +51,7 @@ export function has(object, path, detailed = false) {
 
 export function remove(object, path) {
   checkObject(object);
-  evalRemoveProperty(object, tokenize(path));
+  evalRemove(object, tokenize(path));
 }
 
 export function create(object = {}, path = "") {

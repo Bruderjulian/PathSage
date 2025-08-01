@@ -18,20 +18,18 @@ export function checkObject(obj) {
     throw new SyntaxError("Invalid Object Type");
 }
 
+/*
 export function checkNotation(path) {
   if (typeof path !== "string") throw new TypeError("Invalid Notation Type");
   if (path.length === 0) return;
-  /*
   if (!checkBrackets(path)) {
     throw new SyntaxError("All brackets must be placed correctly");
   }
   if (!checkQuotes(path)) {
     throw new SyntaxError("All Quotes must be placed correctly");
   }
-  */
 }
 
-/*
 export function checkBrackets(path) {
   let counter = 0;
   let current, i, len;

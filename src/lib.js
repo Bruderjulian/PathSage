@@ -66,7 +66,7 @@ export function evalRemove(obj, path) {
 }
 
 export function evalHas(obj, path, detailed) {
-  if (path.length === 0) return true;
+  //if (path.length === 0) return true;
   for (var i = path.length, key, prop; i-- > 0; ) {
     prop = obj[(key = path[i])];
     if ((!isNotObjectLike(prop) && i !== 0) || typeof prop !== "undefined") {
@@ -75,7 +75,7 @@ export function evalHas(obj, path, detailed) {
     }
     if (detailed)
       return {
-        success: true,
+        success: false,
         depth: path.length - i - 1,
         left: ++i,
         key: key,
@@ -95,7 +95,7 @@ export function evalHas(obj, path, detailed) {
 }
 
 export function evalCreate(obj, path) {
-  if (path.length === 0) return obj;
+  if (path.length === 0) return;
   for (let i = path.length, key; --i > 0; ) {
     key = path[i];
     if (isNotObjectLike(obj[key])) obj[key] = {};

@@ -1,10 +1,17 @@
 type ObjectLike = object | unknown[];
-export interface HasResult {
-  success: boolean;
+export interface HasFailedResult {
+  success: false;
   depth: number;
-  left: number | null;
+  left: number;
   currentObject: ObjectLike;
-  key: string | null;
+  key: string;
+}
+export interface HasSuccessResult {
+  success: true;
+  depth: number;
+  left: number;
+  currentObject: ObjectLike;
+  key: null;
 }
 export interface ConfigOptions {
   allowKeys: boolean;
@@ -47,7 +54,7 @@ export function has(
   object: ObjectLike,
   path: string,
   detailed?: boolean
-): boolean | HasResult;
+): boolean | HasFailedResult | HasSuccessResult;
 /**  Remove a property from an object or array at a given path. If the path is empty, an empty object or array is returned.
  *  @param {ObjectLike} object - object to remove the property from.
  *  @param {string} path - path of the property, using the notation
