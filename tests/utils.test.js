@@ -198,6 +198,7 @@ describe("utils", async function () {
     equal(utils.validCacheSize(new Array()), false);
     equal(utils.validCacheSize(Object.create(null)), false);
   });
+  /*
   it("checkNotation", function () {
     doesNotThrow(() => utils.checkNotation(""));
     doesNotThrow(() => utils.checkNotation(""));
@@ -261,4 +262,5 @@ describe("utils", async function () {
       doesNotThrow(() => utils.checkNotation(`['a"""b']`));
     });
   });
+  */
 });

@@ -13,8 +13,24 @@ describe("API Tests", function () {
     const state = PathSage.getPrivates();
     deepEqual(state, defaults);
   });
-  it("must handle configurations", function () {
+  it("configure", function () {
     doesNotThrow(() => PathSage.configure());
+    doesNotThrow(() => PathSage.configure(undefined));
+    doesNotThrow(() => PathSage.configure({}));
+    doesNotThrow(() => PathSage.configure(new Object()));
+    doesNotThrow(() => PathSage.configure(new Object({})));
+    doesNotThrow(() => PathSage.configure(Object.create(null)));
+    throws(() => PathSage.configure([]));
+    throws(() => PathSage.configure(new Array()));
+    throws(() => PathSage.configure(""));
+    throws(() => PathSage.configure(1));
+    throws(() => PathSage.configure(true));
+    throws(() => PathSage.configure(false));
+    throws(() => PathSage.configure(NaN));
+    throws(() => PathSage.configure(null));
+    throws(() => PathSage.configure(func));
+    throws(() => PathSage.configure(Symbol({})));
+    throws(() => PathSage.configure(Symbol([])));
 
     PathSage.configure({
       allowKeys: true,
@@ -188,7 +204,13 @@ describe("API Tests", function () {
     deepEqual(obj, { a: [1, 2], b: 4 });
 
     out = PathSage.has(obj, "c", true);
-    deepEqual(out, { depth: 0, left: 1, failedKey: "c", currentObject: obj });
+    deepEqual(out, {
+      success: false,
+      depth: 0,
+      left: 1,
+      key: "c",
+      currentObject: obj,
+    });
     deepEqual(obj, { a: [1, 2], b: 4 });
   });
 
