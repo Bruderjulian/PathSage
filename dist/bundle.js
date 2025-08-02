@@ -65,7 +65,7 @@ function tokenize(path) {
     return res.reverse();
   })(path)).slice(0);
 }
-export function set(object, path, value) {
+function set(object, path, value) {
   checkObject(object);
   path = tokenize(path);
   if (0 === path.length) return;
@@ -76,7 +76,7 @@ export function set(object, path, value) {
   }
   object[path[0]] = value;
 }
-export function get(obj, path) {
+function get(obj, path) {
   checkObject(obj);
   path = tokenize(path);
   if (0 === path.length) return obj;
@@ -85,7 +85,7 @@ export function get(obj, path) {
       throw EvalError("Could not fully evaluate the object path");
   return obj[path[0]];
 }
-export function has(object, path, detailed = false) {
+function has(object, path, detailed = false) {
   checkObject(object);
   path = tokenize(path);
   for (var key, prop, i = path.length; i-- > 0; ) {
@@ -116,7 +116,7 @@ export function has(object, path, detailed = false) {
       }
     : true;
 }
-export function remove(object, path) {
+function remove(object, path) {
   checkObject(object);
   path = tokenize(path);
   if (0 === path.length) {
@@ -134,7 +134,7 @@ export function remove(object, path) {
     object.splice(key, 1);
   } else delete object[path[0]];
 }
-export function create(object = {}, path = "") {
+function create(object = {}, path = "") {
   checkObject(object);
   path = tokenize(path);
   if (0 === path.length) return;
@@ -144,17 +144,17 @@ export function create(object = {}, path = "") {
   }
   if (!hasOwn(object, (path = path[0]))) object[path] = {};
 }
-export function keys(object) {
+function keys(object) {
   return checkObject(object), keysIterator(object, "");
 }
-export function getPaths(object) {
+function getPaths(object) {
   return checkObject(object), keysIterator(object, "");
 }
-export function clearCache() {
+function clearCache() {
   _cache = {};
   _currentSize = 0;
 }
-export function configure(options = {}) {
+function configure(options = {}) {
   if (isNotObjectLike(options) || isArray(options))
     throw TypeError("Invalid Options Type");
   if ("boolean" == typeof options.allowKeys) _allowKeys = options.allowKeys;
@@ -170,3 +170,26 @@ export function configure(options = {}) {
     _cacheSize = options.cacheSize;
   }
 }
+
+(function (global, factory) {
+  if (typeof module === "object" && typeof module.exports === "object")
+    factory();
+  else if (typeof define === "function" && define.amd) define([], factory);
+  else if (
+    (global = typeof globalThis !== "undefined" ? globalThis : global || self)
+  )
+    factory();
+})(this, function () {
+  "use strict";
+  module.exports = {
+    set,
+    get,
+    has,
+    remove,
+    create,
+    keys,
+    getPaths,
+    configure,
+    clearCache
+  };
+});
