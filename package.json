@@ -2,14 +2,18 @@
   "name": "path-sage",
   "version": "1.6.0",
   "description": "An awesome Object-path notation library",
-  "main": "./dist/index.min.js",
+  "main": "./dist/bundle.min.js",
   "types": "./index.d.ts",
-  "exports": "./dist/index.min.js",
+  "exports": {
+    ".": "./dist/bundle.js",
+    "./minified": "./dist/bundle.min.js"
+    },
   "scripts": {
     "test": "node --test --experimental-test-coverage --test-coverage-exclude=**/*.test.js --no-warnings"
   },
   "files": [
-    "dist/index.min.js",
+    "dist/bundle.js",
+    "dist/bundle.min.js",
     "index.d.ts"
   ],
   "engines": {
