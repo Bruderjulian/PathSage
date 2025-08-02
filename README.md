@@ -191,7 +191,7 @@ The Performance Benchmarks will come in the next version (coming soon)! As of wr
 
 ## Size
 
-It is extremely small with only 5.7Kb (minified + gzipped) and 16Kb (minified)! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
+It is extremely small with only 7.3Kb (minified + gzipped) and 21.3Kb! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
 
 ## Contributing
 
@@ -201,9 +201,8 @@ Let me know if you would like to refine or add features to something!
 
 ## Testing
 
-Everything is being tested with over 45 Tests and 415 Assertions as of now!
-The Tests achieve a near 100% coverage in all stats (lines, branches, functions)!
-I couldn't test some error-catching stuff (only 2) because I haven't found a case where these branches are being executed. These don't affect performance nor size!
+The Tests achieve a near 100% coverage (in lines, branches, functions) with 56 Tests and 494 Assertions as of now, with more to come!
+I couldn't test some error-catching stuff because I haven't found a case where these branches are being executed. These don't affect performance, size nor test coverage!
 
 To run tests, first clone repo and then run the following command:
 
