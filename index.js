@@ -1,4 +1,4 @@
-import {
+const {
   tokenizePath,
   evalCreate,
   evalHas,
@@ -6,15 +6,15 @@ import {
   evalSet,
   evalGet,
   evalRemove,
-} from "./src/lib.js";
+} = require("./src/lib.js");
 
-import {
+const {
   isArray,
   hasOwn,
   isNotObjectLike,
   validCacheSize,
   checkObject,
-} from "./src/utils.js";
+} = require("./src/utils.js");
 
 var _cache = {};
 var _allowKeys = false;
@@ -34,47 +34,47 @@ function tokenize(path) {
   return (_cache[path] = tokenizePath(path, _allowKeys)).slice(0);
 }
 
-export function set(object, path, value) {
+function set(object, path, value) {
   checkObject(object);
   evalSet(object, tokenize(path), value);
 }
 
-export function get(object, path) {
+function get(object, path) {
   checkObject(object);
   return evalGet(object, tokenize(path));
 }
 
-export function has(object, path, detailed = false) {
+function has(object, path, detailed = false) {
   checkObject(object);
   return evalHas(object, tokenize(path), detailed);
 }
 
-export function remove(object, path) {
+function remove(object, path) {
   checkObject(object);
   evalRemove(object, tokenize(path));
 }
 
-export function create(object = {}, path = "") {
+function create(object = {}, path = "") {
   checkObject(object);
   evalCreate(object, tokenize(path));
 }
 
-export function keys(object) {
+function keys(object) {
   checkObject(object);
   return keysIterator(object, "");
 }
 
-export function getPaths(object) {
+function getPaths(object) {
   checkObject(object);
   return keysIterator(object, "");
 }
 
-export function clearCache() {
+function clearCache() {
   _cache = {};
   _currentSize = 0;
 }
 
-export function configure(options = {}) {
+function configure(options = {}) {
   if (isNotObjectLike(options) || isArray(options)) {
     throw new TypeError("Invalid Options Type");
   }
@@ -84,7 +84,7 @@ export function configure(options = {}) {
   if (validCacheSize(options.cacheSize)) _cacheSize = options.cacheSize;
 }
 
-export function getPrivates() {
+function getPrivates() {
   return {
     cache: _cache,
     cacheSize: _cacheSize,
@@ -92,3 +92,16 @@ export function getPrivates() {
     allowKeys: _allowKeys,
   };
 }
+
+module.exports = {
+  set,
+  get,
+  has,
+  remove,
+  create,
+  keys,
+  getPaths,
+  configure,
+  clearCache,
+  getPrivates,
+};

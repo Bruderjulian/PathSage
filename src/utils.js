@@ -1,8 +1,8 @@
-export function isNotObjectLike(obj) {
+function isNotObjectLike(obj) {
   return typeof obj !== "object" || obj === null;
 }
 
-export function validCacheSize(size) {
+function validCacheSize(size) {
   if (typeof size === "string") size = parseFloat(size, 10);
   return (
     typeof size === "number" &&
@@ -13,7 +13,7 @@ export function validCacheSize(size) {
   );
 }
 
-export function checkObject(obj) {
+function checkObject(obj) {
   if (typeof obj !== "object" || obj === null)
     throw new SyntaxError("Invalid Object Type");
 }
@@ -55,9 +55,11 @@ export function checkQuotes(path) {
 */
 
 /* node:coverage ignore next 7 */
-export const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
-export const isArray =
+const hasOwn = Object.hasOwn || Object.call.bind(Object.hasOwnProperty);
+const isArray =
   Array.isArray ||
   function (a) {
     return a && a.constructor === Array;
   };
+
+module.exports = {hasOwn, isArray, checkObject, isNotObjectLike, validCacheSize};
