@@ -1,4 +1,4 @@
-const { hasOwn, isArray, isNotObjectLike } = require ("./utils.js");
+const { hasOwn, isArray, isNotObjectLike } = require("./utils.js");
 
 const disallowedTokens = new Set([
   "this",
@@ -9,7 +9,7 @@ const disallowedTokens = new Set([
 const skipTokens = new Set(["['']", '[""]', "[``]", ""]);
 const escapeReg = /\.|\[|\]|\"|\'|\s/;
 
- function tokenizePath(path, allowKeys) {
+function tokenizePath(path, allowKeys) {
   if (path.length === 0) return [];
   const res = [],
     reg = /\[\s*(\d+)(?=\s*])|\[\s*(["'`])((?:\\.|(?!\2).)*)\2\s*]|[\w$]+/g;
@@ -21,11 +21,10 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
       throw new SyntaxError("Disallowed Key encountered");
     res.push(token);
   }
-  if (!isArray(res)) throw new SyntaxError("Could not tokenize Notation");
   return res.reverse();
 }
 
- function evalSet(obj, path, value) {
+function evalSet(obj, path, value) {
   if (path.length === 0) return;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
@@ -36,7 +35,7 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
   obj[path[0]] = value;
 }
 
- function evalGet(obj, path, defaultValue) {
+function evalGet(obj, path, defaultValue) {
   if (path.length === 0) return obj;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
@@ -48,7 +47,7 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
   return obj[path[0]];
 }
 
- function evalRemove(obj, path) {
+function evalRemove(obj, path) {
   if (path.length === 0) {
     for (const key of Object.keys(obj)) delete obj[key];
     return;
@@ -66,7 +65,7 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
   } else delete obj[path[0]];
 }
 
- function evalHas(obj, path, detailed) {
+function evalHas(obj, path, detailed) {
   //if (path.length === 0) return true;
   for (var i = path.length, key, prop; i-- > 0; ) {
     prop = obj[(key = path[i])];
@@ -95,7 +94,7 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
   return true;
 }
 
- function evalCreate(obj, path) {
+function evalCreate(obj, path) {
   if (path.length === 0) return;
   for (let i = path.length, key; --i > 0; ) {
     key = path[i];
@@ -105,7 +104,7 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
   if (!hasOwn(obj, (path = path[0]))) obj[path] = {};
 }
 
- function keysIterator(obj, currentPath) {
+function keysIterator(obj, currentPath) {
   let keys = Object.keys(obj);
   if (keys.length === 0) return currentPath ? [currentPath] : [];
   const paths = [];
@@ -129,4 +128,12 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
   return paths;
 }
 
-module.exports = {tokenizePath, evalSet, evalGet, evalHas, evalRemove, evalCreate, keysIterator};
+module.exports = {
+  tokenizePath,
+  evalSet,
+  evalGet,
+  evalHas,
+  evalRemove,
+  evalCreate,
+  keysIterator,
+};
