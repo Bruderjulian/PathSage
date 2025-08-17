@@ -36,11 +36,12 @@ const escapeReg = /\.|\[|\]|\"|\'|\s/;
   obj[path[0]] = value;
 }
 
- function evalGet(obj, path) {
+ function evalGet(obj, path, defaultValue) {
   if (path.length === 0) return obj;
   for (let i = path.length; --i > 0; ) {
     obj = obj[path[i]];
     if (isNotObjectLike(obj)) {
+      if (defaultValue) return defaultValue;
       throw new EvalError("Could not fully evaluate the object path");
     }
   }

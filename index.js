@@ -39,9 +39,9 @@ function set(object, path, value) {
   evalSet(object, tokenize(path), value);
 }
 
-function get(object, path) {
+function get(object, path, defaultValue) {
   checkObject(object);
-  return evalGet(object, tokenize(path));
+  return evalGet(object, tokenize(path), defaultValue);
 }
 
 function has(object, path, detailed = false) {
