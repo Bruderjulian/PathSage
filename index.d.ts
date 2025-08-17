@@ -38,7 +38,11 @@ export function set(object: ObjectLike, path: string, value: unknown): void;
  *  @throws {SyntaxError} - if the object is `undefined` or `null` or path is invalid
  *  @throws {EvalError} - if the path could not be fully evaluated.
  */
-export function get(object: ObjectLike, path: string, defaultValue: unknown): unknown;
+export function get(
+  object: ObjectLike,
+  path: string,
+  defaultValue: unknown
+): unknown;
 /**  Check whether a property in an object or array at a given path exists.
  *  @param {ObjectLike} object - object to check.
  *  @param {string} path - path of the property, using the notation

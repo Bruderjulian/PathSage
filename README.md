@@ -30,7 +30,7 @@ With features like path tokenization, caching, optional configuration and more,
 
 ## Installation
 
-Install [the library](https://www.npmjs.com/package/path-sage) with [npm](https://www.npmjs.com):
+Install [the package](https://www.npmjs.com/package/path-sage) with [npm](https://www.npmjs.com):
 
 ```bash
 npm install path-sage
@@ -43,9 +43,11 @@ and import it!
 const PathSage = require("path-sage");
 ```
 
+There also is a minified and performance version available on github!
+
 ## Usage
 
-The library exposes the following static methods:
+The package exposes the following  methods:
 
 - **set()**: Sets a value at the specified path.
 - **get()**: Retrieves a value from the specified path.
