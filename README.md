@@ -193,7 +193,7 @@ The Performance Benchmarks will come in the next version (coming soon)! As of wr
 
 ## Size
 
-It is extremely small with only 7.3Kb (minified + gzipped) and 21.3Kb! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
+It is extremely small with only 6.1Kb (gzipped) and 18.7Kb! With all of the **0 Dependencies** accounted for! And that even with support for Node v6!
 
 ## Contributing
 
