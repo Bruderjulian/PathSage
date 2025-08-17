@@ -6,7 +6,7 @@ const {
   evalSet,
   evalGet,
   evalRemove,
-} = require("./src/lib.js");
+} = require("../src/lib.js");
 
 const {
   isArray,
@@ -14,7 +14,7 @@ const {
   isNotObjectLike,
   validCacheSize,
   checkObject,
-} = require("./src/utils.js");
+} = require("../src/utils.js");
 
 var _cache = {};
 var _allowKeys = false;
