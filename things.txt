@@ -1,0 +1,27 @@
+
+whitespace keys
+escaping
+handle consecutive backslashes
+
+
+Packages: 
+- deep-get-set
+- deep-object
+- deep-property
+- deep-set
+- deephas
+- dot-prop
+- dot-val
+- es5-dot-prop
+- getsetprop
+- lodash.set
+- object-path-set
+- object-path
+- object-set
+- set-nested-prop
+- setvalue
+
+- deep-set-in
+- set-deep
+- set-deep-prop
+- bury
