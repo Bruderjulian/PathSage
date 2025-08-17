@@ -5,15 +5,13 @@
   "main": "./dist/bundle.min.js",
   "types": "./index.d.ts",
   "exports": {
-    ".": "./dist/bundle.js",
-    "./minified": "./dist/bundle.min.js"
+    ".": "./dist/bundle.js"
     },
   "scripts": {
     "test": "node --test --experimental-test-coverage --test-coverage-exclude=**/*.test.js --no-warnings"
   },
   "files": [
     "dist/bundle.js",
-    "dist/bundle.min.js",
     "index.d.ts"
   ],
   "engines": {
