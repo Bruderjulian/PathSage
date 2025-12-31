@@ -23,7 +23,7 @@ var _cacheSize = 4096;
 
 function tokenize(path) {
   if (hasOwn(_cache, path)) {
-    return _cache[path].slice(0) || [];
+    return _cache[path].slice(0);
   }
   if (++_currentSize > _cacheSize && _cacheSize !== -1) {
     _cache = {};
@@ -36,36 +36,37 @@ function tokenize(path) {
 
 function set(object, path, value) {
   checkObject(object);
-  evalSet(object, tokenize(path), value);
+  path = tokenize(path)
+  evalSet(object, path, value);
 }
 
 function get(object, path, defaultValue) {
   checkObject(object);
-  return evalGet(object, tokenize(path), defaultValue);
+  path = tokenize(path);
+  return evalGet(object, path, defaultValue);
 }
 
 function has(object, path, detailed = false) {
   checkObject(object);
-  return evalHas(object, tokenize(path), detailed);
+  path = tokenize(path);
+  return evalHas(object, path, detailed);
 }
 
 function remove(object, path) {
   checkObject(object);
-  evalRemove(object, tokenize(path));
+  path = tokenize(path);
+  evalRemove(object, path);
 }
 
 function create(object = {}, path = "") {
   checkObject(object);
-  evalCreate(object, tokenize(path));
+  path = tokenize(path);
+  evalCreate(object, path);
 }
 
 function keys(object) {
   checkObject(object);
-  return keysIterator(object, "");
-}
-
-function getPaths(object) {
-  checkObject(object);
+  path = tokenize(path);
   return keysIterator(object, "");
 }
 
